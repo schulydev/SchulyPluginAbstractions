@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>Schuly.Plugin.Abstractions</PackageId>
-    <Description>Plugin contract for the Schuly backend</Description>
+    <Description>Plugin contract for the Schuly backend, plus the backend's Schuly.Domain and Schuly.Infrastructure assemblies for direct typed DB access.</Description>
     <Authors>schulydev</Authors>
     <PackageProjectUrl>https://github.com/schulydev/SchulyPluginAbstractions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/schulydev/SchulyPluginAbstractions</RepositoryUrl>
@@ -14,15 +14,36 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>schuly;plugin;abstractions</PackageTags>
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
   </PropertyGroup>
+
+  <!-- Shipped backend DLLs synced from SchulyBackend.
+       Reference them locally so this project can compile against them. -->
+  <ItemGroup Condition="Exists('libs/Schuly.Domain.dll')">
+    <Reference Include="Schuly.Domain">
+      <HintPath>libs/Schuly.Domain.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="Exists('libs/Schuly.Infrastructure.dll')">
+    <Reference Include="Schuly.Infrastructure">
+      <HintPath>libs/Schuly.Infrastructure.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <!-- Transitive deps required by the shipped Infrastructure.dll. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="NUGET_README.md" Pack="true" PackagePath="README.md" />
     <None Include="assets/app_icon.png" Pack="true" PackagePath="icon.png" />
+    <!-- Pack the shipped backend DLLs alongside this project's own DLL. -->
+    <None Include="libs/*.dll" Pack="true" PackagePath="lib/net10.0/" Condition="Exists('libs')" />
   </ItemGroup>
 
 </Project>
