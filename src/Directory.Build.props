@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <_VersionFile>$(MSBuildThisFileDirectory)application.properties</_VersionFile>
+    <_VersionFile>$(MSBuildThisFileDirectory)..\application.properties</_VersionFile>
   </PropertyGroup>
 
   <!-- Evaluate version eagerly at project-load time so dotnet pack picks it up -->
