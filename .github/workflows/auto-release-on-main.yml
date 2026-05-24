@@ -1,0 +1,37 @@
+name: Auto release on main
+
+on:
+  push:
+    branches: [main]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  release:
+    if: "!startsWith(github.event.head_commit.message, 'Bumped application.properties to')"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.MAIN_PUSH_TOKEN }}
+
+      - name: Compute next patch version from application.properties
+        id: ver
+        run: |
+          CURRENT=$(grep -oP '(?<=<version>)[^<]+' application.properties)
+          IFS=. read -r MA MI PA <<< "$CURRENT"
+          NEXT="$MA.$MI.$((PA+1))"
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          echo "next=$NEXT" >> $GITHUB_OUTPUT
+          echo "Current: $CURRENT  →  Next: $NEXT"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.MAIN_PUSH_TOKEN }}
+        run: |
+          gh release create "v${{ steps.ver.outputs.next }}" \
+            --title "v${{ steps.ver.outputs.next }}" \
+            --notes "Auto-release triggered by main push @ ${{ github.sha }}."
