@@ -6,7 +6,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'libs/**'
+      - 'src/Schuly.Plugin.Abstractions/libs/**'
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
