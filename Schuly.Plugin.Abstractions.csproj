@@ -5,8 +5,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>Schuly.Plugin.Abstractions</PackageId>
-    <Description>Abstractions for building Schuly plugins</Description>
-    <Version>1.0.0</Version>
+    <Description>Plugin contract for the Schuly backend</Description>
+    <Authors>schulydev</Authors>
+    <PackageProjectUrl>https://github.com/schulydev/SchulyPluginAbstractions</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/schulydev/SchulyPluginAbstractions</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>schuly;plugin;abstractions</PackageTags>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Schuly.Infrastructure\Schuly.Infrastructure.csproj" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
