@@ -1,6 +1,6 @@
 # <p align="center">SchulyPluginAbstractions</p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/schulydev/Schuly/main/assets/app_icon.png" width="160" alt="Schuly Logo">
+  <img src="./assets/app_icon.png" width="160" alt="Schuly Logo">
 </p>
 <p align="center">
   <strong>Plugin contract for the Schuly backend — distributed as a NuGet package</strong>
