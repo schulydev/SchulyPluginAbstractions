@@ -69,7 +69,7 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Pack
-        run: dotnet pack Schuly.Plugin.Abstractions.csproj --configuration Release -o ./out
+        run: dotnet pack src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj --configuration Release -o ./out
 
       - name: Push to NuGet.org
         run: |
