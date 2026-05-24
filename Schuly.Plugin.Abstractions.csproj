@@ -12,8 +12,9 @@
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <PackageTags>schuly;plugin;abstractions</PackageTags>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +23,7 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="assets/app_icon.png" Pack="true" PackagePath="icon.png" />
   </ItemGroup>
 
 </Project>
