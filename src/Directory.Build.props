@@ -8,6 +8,18 @@
   <PropertyGroup Condition="Exists('$(_VersionFile)')">
     <_VersionFileContent>$([System.IO.File]::ReadAllText('$(_VersionFile)'))</_VersionFileContent>
     <Version>$([System.Text.RegularExpressions.Regex]::Match('$(_VersionFileContent)', '&lt;version&gt;(.*?)&lt;/version&gt;').Groups[1].Value)</Version>
+
+    <!-- Pin the *assembly* version to MAJOR.MINOR.0.0 so it stays stable across
+         patch releases. Plugins embed a hard reference to this assembly version;
+         if it tracked the full package version (the default), a plugin built
+         against 0.2.24 would fail to load on a host providing 0.2.23 (type-load),
+         and every patch bump would force a rebuild of all plugins. With it pinned,
+         any plugin built against any 0.2.x binds to 0.2.0.0 — which any 0.2.x host
+         provides. Bump the MINOR only for a breaking contract change.
+         FileVersion / InformationalVersion keep the full version for diagnostics. -->
+    <AssemblyVersion>$([System.Text.RegularExpressions.Regex]::Replace('$(Version)', '^(\d+)\.(\d+).*', '$1.$2.0.0'))</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
   </PropertyGroup>
 
 </Project>
