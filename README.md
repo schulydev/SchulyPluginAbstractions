@@ -3,7 +3,7 @@
   <img src="./assets/app_icon.png" width="160" alt="Schuly Logo">
 </p>
 <p align="center">
-  <strong>Plugin contract for the Schuly backend — distributed as a NuGet package</strong>
+  <strong>Plugin contract for the Schuly backend - distributed as a NuGet package</strong>
 </p>
 <p align="center">
   <a href="https://github.com/schulydev/SchulyPluginAbstractions/stargazers"><img src="https://img.shields.io/github/stars/schulydev/SchulyPluginAbstractions?style=flat&color=3da8ff" alt="GitHub stars"/></a>
@@ -15,10 +15,10 @@ The stable contract that plugins implement and that [SchulyBackend](https://gith
 
 ## What's in this repo
 
-- `ISchulyPlugin` — entry point: register services, endpoints, migrations
-- `IPluginBackgroundTask` — recurring background work
-- `IPluginEventHandler<TCommand>` — react to application commands
-- `IPluginUserContext` — read user claims / roles from inside a plugin
+- `ISchulyPlugin` - entry point: register services, endpoints, migrations
+- `IPluginBackgroundTask` - recurring background work
+- `IPluginEventHandler<TCommand>` - react to application commands
+- `IPluginUserContext` - read user claims / roles from inside a plugin
 
 ## The Schuly ecosystem
 
