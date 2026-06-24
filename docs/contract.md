@@ -100,16 +100,21 @@ public interface IPluginUserContext
 
 ## `IPluginLogin`
 
-A plugin's account-connect contract. The backend exposes a single unified login endpoint,
-resolves the `IPluginLogin` whose `SystemKey` matches the requested school system, and calls
-`ConnectAsync` with the login-field values the app collected from the catalog descriptor.
-The plugin reads the current user via `IPluginUserContext`, authenticates against its
-provider, persists the account, and returns its id. No provider auth lives in the backend.
+A plugin's account-connect contract — **and the source of its school-system catalog
+entry**. The plugin exposes a `SchoolSystem` descriptor; the backend collects it from
+every loaded plugin and seeds the catalog (seed-if-missing by `Key`), so the operator
+no longer supplies catalog config. The backend then exposes a single unified login
+endpoint, resolves the `IPluginLogin` whose `SystemKey` matches the requested system,
+and calls `ConnectAsync` with the login-field values the app collected from that
+descriptor. The plugin reads the current user via `IPluginUserContext`, authenticates
+against its provider, persists the account, and returns its id. No provider auth lives
+in the backend.
 
 ```csharp
 public interface IPluginLogin
 {
-    string SystemKey { get; }
+    SchoolSystemDescriptor SchoolSystem { get; }   // the catalog entry this login serves
+    string SystemKey => SchoolSystem.Key;          // default member — defaults to SchoolSystem.Key
 
     Task<PluginLoginResult> ConnectAsync(
         IReadOnlyDictionary<string, string> fields,
@@ -120,8 +125,30 @@ public interface IPluginLogin
 
 | Member | Purpose |
 |---|---|
-| `SystemKey` | The catalog system key this login handles, e.g. `"schulnetz"`. |
-| `ConnectAsync(IReadOnlyDictionary<string,string>, string?, CancellationToken)` | Connect an account from the collected login fields, keyed by the catalog's `loginFields` keys (e.g. `"email"`, `"password"`, `"baseUrl"`). `displayName` is an optional friendly name. |
+| `SchoolSystem` | The catalog descriptor the app renders: `Key`, `DisplayName`, `LoginMethod`, `PrivateAuthStrategy` (`"token"`/`"scrape"`), `StatelessBasePath`, `PluginBasePath`, `SortOrder`, and the `LoginFields` the app collects. |
+| `SystemKey` | The catalog system key this login handles, e.g. `"schulnetz"`. Default member returning `SchoolSystem.Key`; you only implement `SchoolSystem`. |
+| `ConnectAsync(IReadOnlyDictionary<string,string>, string?, CancellationToken)` | Connect an account from the collected login fields, keyed by the descriptor's `LoginFields` keys (e.g. `"email"`, `"password"`, `"baseUrl"`). `displayName` is an optional friendly name. |
+
+`SchoolSystemDescriptor` (and its `LoginFields` of `SchoolSystemLoginFieldDescriptor`)
+live in `Schuly.Plugin.Abstractions`; build them in your `IPluginLogin`:
+
+```csharp
+public SchoolSystemDescriptor SchoolSystem => new()
+{
+    Key = "schulnetz",
+    DisplayName = "Schulnetz",
+    LoginMethod = "credentials",
+    PrivateAuthStrategy = "token",
+    StatelessBasePath = "/api/plugins/schulware/stateless",
+    PluginBasePath = "/api/plugins/schulware",
+    LoginFields =
+    [
+        new() { Key = "baseUrl",  Label = "Schulnetz URL", Type = "url",      Required = true },
+        new() { Key = "email",    Label = "Email",         Type = "text",     Required = true },
+        new() { Key = "password", Label = "Password",      Type = "password", Required = true },
+    ],
+};
+```
 
 ### `PluginLoginResult`
 
