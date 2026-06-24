@@ -1,4 +1,4 @@
-# Notes for Claude (and humans) — SchulyPluginAbstractions
+# Notes for Claude (and humans) - SchulyPluginAbstractions
 
 The stable plugin contract for the Schuly backend, published as `Schuly.Plugin.Abstractions` on NuGet.org.
 
@@ -7,7 +7,7 @@ The stable plugin contract for the Schuly backend, published as `Schuly.Plugin.A
 - Never work on `main`. Create an issue (labeled) → branch `feature/<issue#>_PascalCase`
   or `fix/<issue#>_PascalCase` → PR (labeled) with `Closes #<issue>` → squash-merge +
   delete branch.
-- Use **bun** as the package manager / task runner — never npm, npx, or node directly.
+- Use **bun** as the package manager / task runner - never npm, npx, or node directly.
 - Use CLI tooling whenever one exists (`gh issue create`, `gh pr create`, generators, etc.).
 - No AI / Claude attribution in commits or PRs. Ever.
 - No test plans in PRs. PR body is **Summary** + `Closes #<issue>` only.
@@ -16,7 +16,7 @@ The stable plugin contract for the Schuly backend, published as `Schuly.Plugin.A
 
 ## Contents
 
-4 interfaces — that's it. Keep this repo **small and stable**.
+4 interfaces - that's it. Keep this repo **small and stable**.
 
 | Interface | Purpose |
 |---|---|
@@ -29,7 +29,7 @@ Plus the `PluginServiceContext` record (`ConnectionString`, `IConfiguration`) pa
 
 ## What this repo **must not** depend on
 
-- `Schuly.Application` / `Schuly.Domain` / `Schuly.Infrastructure` — those are in [SchulyBackend](https://github.com/schulydev/SchulyBackend) and not published. Only BCL + `Microsoft.AspNetCore.App` framework references are allowed.
+- `Schuly.Application` / `Schuly.Domain` / `Schuly.Infrastructure` - those are in [SchulyBackend](https://github.com/schulydev/SchulyBackend) and not published. Only BCL + `Microsoft.AspNetCore.App` framework references are allowed.
 
 ## Versioning rules
 
@@ -49,16 +49,16 @@ Automatic on release. To dry-run locally:
 dotnet pack Schuly.Plugin.Abstractions.csproj --configuration Release -o ./out
 ```
 
-The version comes from `application.properties` via `Directory.Build.props` — no need to pass `-p:Version=`.
+The version comes from `application.properties` via `Directory.Build.props` - no need to pass `-p:Version=`.
 
 Publish workflow (`nuget-publish.yml`) on `release: published`:
-1. `sync-version` — bumps `application.properties` from the release tag, auto-merges
-2. `publish` — packs and pushes to `https://api.nuget.org/v3/index.json` with `--skip-duplicate`
+1. `sync-version` - bumps `application.properties` from the release tag, auto-merges
+2. `publish` - packs and pushes to `https://api.nuget.org/v3/index.json` with `--skip-duplicate`
 
 ## Package metadata
 
 Edit in the csproj `PropertyGroup`. Note two READMEs:
-- `README.md` — GitHub-facing (centered logo, badges, HTML)
-- `NUGET_README.md` — packed as the NuGet README (plain markdown, absolute image URLs — NuGet.org doesn't render HTML)
+- `README.md` - GitHub-facing (centered logo, badges, HTML)
+- `NUGET_README.md` - packed as the NuGet README (plain markdown, absolute image URLs - NuGet.org doesn't render HTML)
 
 Icon is `assets/app_icon.png`, packed as `icon.png` via `<PackageIcon>icon.png</PackageIcon>`.
