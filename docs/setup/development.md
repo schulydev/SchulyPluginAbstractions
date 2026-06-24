@@ -4,7 +4,7 @@ Local environment for building and packing the abstractions package.
 
 ## Prerequisites
 
-- **.NET SDK 10.0.x** — the project targets `net10.0`
+- **.NET SDK 10.0.x** - the project targets `net10.0`
   (`<TargetFramework>net10.0</TargetFramework>` in the csproj).
 - The project uses a `Microsoft.AspNetCore.App` framework reference, so the ASP.NET Core
   shared framework must be available (it ships with the .NET SDK).
@@ -51,7 +51,7 @@ dotnet pack Schuly.Plugin.Abstractions.csproj --configuration Release -o ./out
 ```
 
 (From the repo root, point at the full path
-`src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj` — that's exactly what the
+`src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj` - that's exactly what the
 publish workflow runs.)
 
 You do **not** pass `-p:Version=`. The version comes from `application.properties`

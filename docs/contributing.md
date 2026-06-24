@@ -1,7 +1,7 @@
 # Contributing
 
 This repo is the **stable published contract**. Keep it small, keep it stable. Almost every
-change is governed by [versioning](versioning.md) — read that first.
+change is governed by [versioning](versioning.md) - read that first.
 
 ## Dependency rules
 
@@ -25,7 +25,7 @@ Do **not** add references to `Schuly.Application` (those types live in
    `CI/CD`, `dependencies`, `bug`, `refactor`).
 2. **Branch** from `main`: `feature/<issue#>_PascalCase` or `fix/<issue#>_PascalCase`.
    Never commit to `main`.
-3. **Open a PR** with `Closes #<issue>`. The PR body is **Summary + `Closes #<issue>` only** —
+3. **Open a PR** with `Closes #<issue>`. The PR body is **Summary + `Closes #<issue>` only** -
    no test plans.
 4. **Squash-merge** and delete the branch.
 
@@ -33,7 +33,7 @@ Commit subjects are short and imperative.
 
 ## No AI attribution
 
-Never add AI / assistant attribution anywhere — not in commit messages, PR descriptions, or
+Never add AI / assistant attribution anywhere - not in commit messages, PR descriptions, or
 issue bodies. No `Co-Authored-By` trailers, no "generated with" lines. Ever.
 
 ## Picking a version bump
