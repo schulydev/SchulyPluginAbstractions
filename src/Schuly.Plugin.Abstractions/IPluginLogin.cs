@@ -11,8 +11,19 @@ namespace Schuly.Plugin.Abstractions
     /// </summary>
     public interface IPluginLogin
     {
-        /// <summary>The catalog system key this login handles, e.g. "schulnetz".</summary>
-        string SystemKey { get; }
+        /// <summary>
+        /// The catalog entry this login serves. The backend collects this from every
+        /// loaded plugin to build the school-systems catalog (so the operator no longer
+        /// supplies catalog config); the app renders this descriptor's login fields and
+        /// submits the collected values to <see cref="ConnectAsync"/>.
+        /// </summary>
+        SchoolSystemDescriptor SchoolSystem { get; }
+
+        /// <summary>
+        /// The catalog system key this login handles, e.g. "schulnetz".
+        /// Defaults to <see cref="SchoolSystemDescriptor.Key"/>.
+        /// </summary>
+        string SystemKey => SchoolSystem.Key;
 
         /// <summary>
         /// Connect an account from the collected login fields, keyed by the
