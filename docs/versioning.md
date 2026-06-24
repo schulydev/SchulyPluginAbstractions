@@ -10,7 +10,7 @@ runtime, so a careless change breaks every plugin in the field.
 |---|---|---|
 | Change a method signature, add a method to an existing interface, or rename a member | **MAJOR** | `breaking-change` |
 | Add a new optional interface, or a default-implemented method | **MINOR** | `feature` |
-| Docs / metadata / packaging tweaks | **PATCH** | *(default — no label needed)* |
+| Docs / metadata / packaging tweaks | **PATCH** | *(default - no label needed)* |
 
 ## How the version is resolved
 
@@ -28,5 +28,5 @@ runtime, so a careless change breaks every plugin in the field.
 `FileVersion`/`InformationalVersion` carry the full version). A plugin built against any
 `MAJOR.MINOR.x` binds to a single `MAJOR.MINOR.0.0` assembly, so patch bumps don't force a
 rebuild of every plugin and don't cause type-load failures across patch versions. Only a
-**MINOR or MAJOR** bump changes the binding assembly version — another reason to follow the
+**MINOR or MAJOR** bump changes the binding assembly version - another reason to follow the
 table above exactly.

@@ -100,7 +100,7 @@ public interface IPluginUserContext
 
 ## `IPluginLogin`
 
-A plugin's account-connect contract — **and the source of its school-system catalog
+A plugin's account-connect contract - **and the source of its school-system catalog
 entry**. The plugin exposes a `SchoolSystem` descriptor; the backend collects it from
 every loaded plugin and seeds the catalog (seed-if-missing by `Key`), so the operator
 no longer supplies catalog config. The backend then exposes a single unified login
@@ -114,7 +114,7 @@ in the backend.
 public interface IPluginLogin
 {
     SchoolSystemDescriptor SchoolSystem { get; }   // the catalog entry this login serves
-    string SystemKey => SchoolSystem.Key;          // default member — defaults to SchoolSystem.Key
+    string SystemKey => SchoolSystem.Key;          // default member - defaults to SchoolSystem.Key
 
     Task<PluginLoginResult> ConnectAsync(
         IReadOnlyDictionary<string, string> fields,
