@@ -14,6 +14,23 @@ The stable plugin contract for the Schuly backend, published as `Schuly.Plugin.A
 - Commit subject: short imperative.
 - PR labels: `bug`, `enhancement`, `feature`, `refactor`, `CI/CD`, `dependencies`, `documentation`.
 
+## Code formatting
+
+Declaration signatures go on **one line** - never wrap the parameter list of a `record`, an interface method, a primary-constructor `class`/`struct`, a method, or a constructor across multiple lines, however long it gets:
+
+```csharp
+// Yes
+Task<PluginLoginResult> ConnectAsync(IReadOnlyDictionary<string, string> fields, string? displayName, CancellationToken cancellationToken);
+
+// No - parameter list wrapped across lines
+Task<PluginLoginResult> ConnectAsync(
+    IReadOnlyDictionary<string, string> fields,
+    string? displayName,
+    CancellationToken cancellationToken);
+```
+
+**Keep wrapped as-is** (do *not* collapse): fluent / method-call chains (`.Where(...).Select(...)`), LINQ query expressions, and multi-line `if` / `while` / `for` / `switch` conditions and boolean expressions.
+
 ## Contents
 
 4 interfaces - that's it. Keep this repo **small and stable**.
