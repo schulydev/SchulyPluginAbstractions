@@ -31,10 +31,7 @@ namespace Schuly.Plugin.Abstractions
         /// </summary>
         /// <param name="fields">The submitted field values.</param>
         /// <param name="displayName">Optional friendly name for the account.</param>
-        Task<PluginLoginResult> ConnectAsync(
-            IReadOnlyDictionary<string, string> fields,
-            string? displayName,
-            CancellationToken cancellationToken = default);
+        Task<PluginLoginResult> ConnectAsync(IReadOnlyDictionary<string, string> fields, string? displayName, CancellationToken cancellationToken = default);
     }
 
     /// <summary>Outcome of <see cref="IPluginLogin.ConnectAsync"/>.</summary>
