@@ -1,7 +1,5 @@
 name: Auto release on main
 
-# Fires only when the shipped backend DLLs actually change. Other commits
-# (docs, sync-version bumps, csproj tweaks) won't cut a release.
 on:
   push:
     branches: [main]
