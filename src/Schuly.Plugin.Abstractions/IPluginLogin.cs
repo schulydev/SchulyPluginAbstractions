@@ -1,39 +1,21 @@
 namespace Schuly.Plugin.Abstractions
 {
     /// <summary>
-    /// A plugin's account-connect contract. The backend (a dumb CRM) exposes a
-    /// single unified login endpoint; it resolves the <see cref="IPluginLogin"/>
-    /// whose <see cref="SystemKey"/> matches the requested school system and calls
-    /// <see cref="ConnectAsync"/> with the login-field values the app collected
-    /// from the catalog descriptor. The plugin reads the current user from
-    /// <see cref="IPluginUserContext"/>, authenticates against its provider,
-    /// persists the account, and returns its id. No provider auth lives in the CRM.
+    /// A plugin's account-connect contract. The backend resolves the implementation whose
+    /// <see cref="SystemKey"/> matches the requested system and calls
+    /// <see cref="ConnectAsync"/>; the plugin authenticates against its own provider and
+    /// persists the account. No provider auth lives in the backend.
     /// </summary>
     public interface IPluginLogin
     {
-        /// <summary>
-        /// The catalog entry this login serves. The backend collects this from every
-        /// loaded plugin to build the school-systems catalog (so the operator no longer
-        /// supplies catalog config); the app renders this descriptor's login fields and
-        /// submits the collected values to <see cref="ConnectAsync"/>.
-        /// </summary>
+        /// <summary>The catalog entry this login serves; the backend seeds the catalog from it.</summary>
         SchoolSystemDescriptor SchoolSystem { get; }
 
-        /// <summary>
-        /// The catalog system key this login handles, e.g. "schulnetz".
-        /// Defaults to <see cref="SchoolSystemDescriptor.Key"/>.
-        /// </summary>
         string SystemKey => SchoolSystem.Key;
 
-        /// <summary>
-        /// Connect an account from the collected login fields, keyed by the
-        /// catalog's <c>loginFields</c> keys (e.g. "email", "password", "baseUrl").
-        /// </summary>
-        /// <param name="fields">The submitted field values.</param>
-        /// <param name="displayName">Optional friendly name for the account.</param>
+        /// <summary>Connect an account from values keyed by the descriptor's <c>loginFields</c> keys.</summary>
         Task<PluginLoginResult> ConnectAsync(IReadOnlyDictionary<string, string> fields, string? displayName, CancellationToken cancellationToken = default);
     }
 
-    /// <summary>Outcome of <see cref="IPluginLogin.ConnectAsync"/>.</summary>
     public record PluginLoginResult(bool Success, Guid? AccountId = null, string? Message = null);
 }
