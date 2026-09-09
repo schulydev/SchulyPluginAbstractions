@@ -1,7 +1,7 @@
 # Contract reference
 
 Everything in the package lives in the `Schuly.Plugin.Abstractions` namespace and targets
-`net10.0`. The contract is **5 interfaces** plus two small records. All signatures below are
+`net10.0`. The contract is **5 interfaces** plus three small records. All signatures below are
 copied verbatim from source under `src/Schuly.Plugin.Abstractions/`.
 
 > The package also ships the backend's `Schuly.Domain.dll` and `Schuly.Infrastructure.dll`
@@ -49,13 +49,13 @@ public record PluginServiceContext(string ConnectionString, IConfiguration Confi
 ## `IPluginBackgroundTask`
 
 Recurring background work. The backend's `PluginBackgroundTaskHost` invokes `ExecuteAsync`
-on the configured `Interval`.
+on the task's declared `Schedule`.
 
 ```csharp
 public interface IPluginBackgroundTask
 {
     string Name { get; }
-    TimeSpan Interval { get; }
+    PluginSchedule Schedule { get; }
     Task ExecuteAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken);
 }
 ```
@@ -63,8 +63,48 @@ public interface IPluginBackgroundTask
 | Member | Purpose |
 |---|---|
 | `Name` | Task identifier (for logging/diagnostics). |
-| `Interval` | How often the host runs the task. |
+| `Schedule` | The task's default schedule; the host operator can override the cadence. |
 | `ExecuteAsync(IServiceProvider, CancellationToken)` | One execution of the work. Resolve scoped services from `serviceProvider`. |
+
+### `PluginSchedule`
+
+The plugin's default schedule for a background task, as a scheduler-agnostic value - it
+depends on nothing beyond the BCL. The host maps it onto its own scheduler (TickerQ); the
+host operator can override the cadence per deployment.
+
+```csharp
+public sealed record PluginSchedule(string Cron, int Retries = 0, IReadOnlyList<TimeSpan>? RetryIntervals = null, bool RunOnStartup = false)
+```
+
+| Member | Purpose |
+|---|---|
+| `Cron` | Standard 5-field cron expression (`minute hour day-of-month month day-of-week`). Validated in the constructor and on every `with`-expression; an invalid expression throws `ArgumentException`. |
+| `Retries` | Number of times the host retries a failed execution. Must be `>= 0`. |
+| `RetryIntervals` | Delay before each retry. When there are more retries than intervals, the host reuses the last interval for the remaining attempts. `null` means the host's own default backoff applies. |
+| `RunOnStartup` | Whether the host should also run the task once immediately at startup. |
+
+| Factory | Produces |
+|---|---|
+| `Every(TimeSpan interval)` | A fixed-interval schedule. Only whole minutes dividing 60 (1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60) or whole hours dividing 24 (1, 2, 3, 4, 6, 8, 12, 24) are accepted - anything else can't be expressed as a true fixed-cadence cron and throws `ArgumentOutOfRangeException`. |
+| `Daily(int hour, int minute = 0)` | A schedule that fires once a day at `hour:minute`. |
+| `Hourly(int minute = 0)` | A schedule that fires once an hour at `minute`. |
+
+```csharp
+public sealed class SyncTimetableTask : IPluginBackgroundTask
+{
+    public string Name => "schulware.sync-timetable";
+    public PluginSchedule Schedule => PluginSchedule.Every(TimeSpan.FromMinutes(30));
+
+    public Task ExecuteAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken) => Task.CompletedTask;
+}
+```
+
+For a schedule the factories can't express, construct `PluginSchedule` directly with a cron
+string and, optionally, retry behaviour:
+
+```csharp
+public PluginSchedule Schedule => new("0 6 * * MON-FRI", Retries: 3, RetryIntervals: [TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5)]);
+```
 
 ## `IPluginEventHandler<TCommand>`
 

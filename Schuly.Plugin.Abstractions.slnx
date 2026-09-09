@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Schuly.Plugin.Abstractions.Tests/Schuly.Plugin.Abstractions.Tests.csproj" />
+    <Project Path="src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj" />
+  </Folder>
+</Solution>

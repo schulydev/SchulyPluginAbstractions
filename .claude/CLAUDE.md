@@ -38,7 +38,7 @@ Task<PluginLoginResult> ConnectAsync(
 | Interface | Purpose |
 |---|---|
 | `ISchulyPlugin` | Plugin entry point: `ConfigureServices`, `ConfigureEndpoints`, `MigrateAsync` |
-| `IPluginBackgroundTask` | Recurring background work (`Name`, `Interval`, `ExecuteAsync`) |
+| `IPluginBackgroundTask` | Recurring background work (`Name`, `Schedule`, `ExecuteAsync`) |
 | `IPluginEventHandler<TCommand>` | React to backend commands |
 | `IPluginUserContext` | Read current user / school-user from inside a plugin |
 
