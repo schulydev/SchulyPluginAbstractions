@@ -18,7 +18,7 @@ The stable contract that plugins implement and that [SchulyBackend](https://gith
 
 - `ISchulyPlugin` - entry point: register services, endpoints, migrations
 - `IPluginLogin` - account-connect contract, and the source of a plugin's school-system catalog entry
-- `IPluginBackgroundTask` - recurring background work
+- `IPluginBackgroundTask` - recurring background work on a declared `PluginSchedule` (cron + retries)
 - `IPluginEventHandler<TCommand>` - react to application commands
 - `IPluginUserContext` - read user claims / roles from inside a plugin
 

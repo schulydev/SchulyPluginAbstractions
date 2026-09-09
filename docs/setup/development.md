@@ -14,17 +14,21 @@ Local environment for building and packing the abstractions package.
 ```
 src/
 ├── Directory.Build.props                      # reads <version> from application.properties
-└── Schuly.Plugin.Abstractions/
-    ├── ISchulyPlugin.cs                        # + PluginServiceContext record
-    ├── IPluginBackgroundTask.cs
-    ├── IPluginEventHandler.cs
-    ├── IPluginUserContext.cs
-    ├── IPluginLogin.cs                         # + PluginLoginResult record
-    ├── NUGET_README.md                         # packed as the NuGet README
-    ├── Schuly.Plugin.Abstractions.csproj
-    └── libs/                                    # shipped backend DLLs
-        ├── Schuly.Domain.dll
-        └── Schuly.Infrastructure.dll
+├── Schuly.Plugin.Abstractions/
+│   ├── ISchulyPlugin.cs                        # + PluginServiceContext record
+│   ├── IPluginBackgroundTask.cs
+│   ├── PluginSchedule.cs                       # PluginSchedule record
+│   ├── IPluginEventHandler.cs
+│   ├── IPluginUserContext.cs
+│   ├── IPluginLogin.cs                         # + PluginLoginResult record
+│   ├── NUGET_README.md                         # packed as the NuGet README
+│   ├── Schuly.Plugin.Abstractions.csproj
+│   └── libs/                                    # shipped backend DLLs
+│       ├── Schuly.Domain.dll
+│       └── Schuly.Infrastructure.dll
+└── Schuly.Plugin.Abstractions.Tests/
+    ├── PluginScheduleTests.cs
+    └── Schuly.Plugin.Abstractions.Tests.csproj
 ```
 
 The csproj references `libs/Schuly.Domain.dll` and `libs/Schuly.Infrastructure.dll`
@@ -35,12 +39,28 @@ The csproj references `libs/Schuly.Domain.dll` and `libs/Schuly.Infrastructure.d
 
 ## Build
 
+The repo root has a solution file (`Schuly.Plugin.Abstractions.slnx`) that builds both the
+abstractions project and its test project together:
+
+```sh
+dotnet build
+```
+
+Or point at the abstractions project directly, as the publish workflow does:
+
 ```sh
 dotnet build src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj
 ```
 
-There is no test project in this repo; the contract is verified by downstream consumers
-(SchulyBackend and the plugins).
+There is now a TUnit test project (`Schuly.Plugin.Abstractions.Tests`) covering
+`PluginSchedule`:
+
+```sh
+dotnet test
+```
+
+The interfaces themselves have no runtime behavior of their own and are still verified by
+downstream consumers (SchulyBackend and the plugins).
 
 ## Pack dry-run (local)
 

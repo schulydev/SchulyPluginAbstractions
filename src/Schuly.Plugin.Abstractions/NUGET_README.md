@@ -35,6 +35,21 @@ public class MyPlugin : ISchulyPlugin
 
 The backend's plugin host discovers and runs your plugin automatically.
 
+Register a recurring background task with a declared default `PluginSchedule`:
+
+```csharp
+public sealed class SyncTimetableTask : IPluginBackgroundTask
+{
+    public string Name => "schulware.sync-timetable";
+    public PluginSchedule Schedule => PluginSchedule.Every(TimeSpan.FromMinutes(30));
+
+    public Task ExecuteAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken) => Task.CompletedTask;
+}
+```
+
+The host operator can override the cadence per deployment; `PluginSchedule` is
+scheduler-agnostic and only describes intent.
+
 ## Links
 
 - [SchulyBackend](https://github.com/schulydev/SchulyBackend) - consumes this package
