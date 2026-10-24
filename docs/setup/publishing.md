@@ -25,10 +25,8 @@ Triggered on `release: published`. Two jobs:
 
 ### Where releases come from
 
-Releases are cut by `.github/workflows/auto-release-on-main.yml`, which fires **only when the
-shipped backend DLLs change** (`paths: src/Schuly.Plugin.Abstractions/libs/**`). It computes
-the next patch version from `application.properties` and runs `gh release create`. Releases
-for contract changes are otherwise driven by release-drafter - see [versioning](../versioning.md).
+Releases are cut by hand with `gh release create vX.Y.Z`, using the version release-drafter
+resolves from the merged PR labels - see [versioning](../versioning.md).
 
 ## Package metadata
 
