@@ -22,6 +22,9 @@ namespace Schuly.Plugin.Abstractions
 
         Task<SyncResult> SyncDocumentsAsync(Guid schoolUserId, IReadOnlyCollection<DocumentRecord> documents, CancellationToken cancellationToken = default);
 
+        /// <summary>Upserts semester reports by program, school year and half-year; a report's subjects are replaced as a whole.</summary>
+        Task<SyncResult> SyncSemesterReportsAsync(Guid schoolUserId, IReadOnlyCollection<SemesterReportRecord> reports, CancellationToken cancellationToken = default);
+
         /// <summary>External ids of the documents this plugin already synced for the student, to skip re-downloading them.</summary>
         Task<IReadOnlySet<string>> GetDocumentIdsAsync(Guid schoolUserId, CancellationToken cancellationToken = default);
     }

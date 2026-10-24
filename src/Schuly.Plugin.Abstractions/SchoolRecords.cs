@@ -34,6 +34,12 @@ namespace Schuly.Plugin.Abstractions
 
     public sealed record AbsenceRecord(string ExternalId, DateTimeOffset From, DateTimeOffset Until, string? Reason = null, bool IsLate = false);
 
+    /// <summary>A semester report (Zeugnis). <see cref="SchoolYearStart"/> is the year the school year begins (2025 for 25/26); <see cref="SemesterHalf"/> is 1 or 2.</summary>
+    public sealed record SemesterReportRecord(string ProgramCode, int SchoolYearStart, int SemesterHalf, string ClassName, IReadOnlyList<SemesterSubjectRecord> Subjects, string? PromotionDecision = null, decimal? GradeAverage = null, int? ExcusedAbsences = null, int? UnexcusedAbsences = null);
+
+    /// <summary>One subject on a report: a numeric <see cref="Grade"/>, or a <see cref="Marker"/> such as "disp" when there is none.</summary>
+    public sealed record SemesterSubjectRecord(string SubjectCode, string SubjectName, decimal? Grade = null, string? Marker = null, string? SubjectTypeMarker = null);
+
     /// <summary>A student document; <see cref="File"/> is what <see cref="IPluginFileStore.SaveAsync"/> returned, if the file was downloaded.</summary>
     public sealed record DocumentRecord(string ExternalId, string Title, string? FileName = null, string? Category = null, string? Comment = null, string? EnteredBy = null, StoredFile? File = null);
 }

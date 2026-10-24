@@ -227,6 +227,7 @@ public interface ISchoolData
     Task<SyncResult> SyncAbsencesAsync(Guid schoolUserId, IReadOnlyCollection<AbsenceRecord> absences, CancellationToken cancellationToken = default);
     Task<SyncResult> SyncDocumentsAsync(Guid schoolUserId, IReadOnlyCollection<DocumentRecord> documents, CancellationToken cancellationToken = default);
     Task<IReadOnlySet<string>> GetDocumentIdsAsync(Guid schoolUserId, CancellationToken cancellationToken = default);
+    Task<SyncResult> SyncSemesterReportsAsync(Guid schoolUserId, IReadOnlyCollection<SemesterReportRecord> reports, CancellationToken cancellationToken = default);
 }
 ```
 
@@ -236,6 +237,7 @@ public interface ISchoolData
 | `EnsureStudentAsync` | Find the user's student profile at the school, creating it if missing, and fill blank fields. Returns the school-user id. |
 | `Sync*Async` | Upsert records by `ExternalId`: unknown ids are added, known ones updated. Returns `SyncResult(Added, Updated)`. |
 | `GetDocumentIdsAsync` | External ids of documents already synced, so a plugin can skip re-downloading them. |
+| `SyncSemesterReportsAsync` | Upsert semester reports by program code, school year and half-year; each report's subjects are replaced as a whole. |
 
 `SyncGradesAsync` creates the subject (class) and exam for each grade as needed and enrols the
 student in it.
@@ -249,6 +251,8 @@ public sealed record GradeRecord(string ExternalId, string Subject, string ExamN
 public sealed record AbsenceRecord(string ExternalId, DateTimeOffset From, DateTimeOffset Until, string? Reason = null, bool IsLate = false);
 public sealed record DocumentRecord(string ExternalId, string Title, string? FileName = null, string? Category = null, string? Comment = null, string? EnteredBy = null, StoredFile? File = null);
 public enum AgendaKind { Event = 0, Lesson = 1, Test = 2, Holiday = 3 }
+public sealed record SemesterReportRecord(string ProgramCode, int SchoolYearStart, int SemesterHalf, string ClassName, IReadOnlyList<SemesterSubjectRecord> Subjects, string? PromotionDecision = null, decimal? GradeAverage = null, int? ExcusedAbsences = null, int? UnexcusedAbsences = null);
+public sealed record SemesterSubjectRecord(string SubjectCode, string SubjectName, decimal? Grade = null, string? Marker = null, string? SubjectTypeMarker = null);
 ```
 
 `StudentRecord` has optional init-only profile fields (`FirstName`, `LastName`, `Email`,
