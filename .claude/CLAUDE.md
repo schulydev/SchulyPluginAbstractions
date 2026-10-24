@@ -33,7 +33,7 @@ Task<PluginLoginResult> ConnectAsync(
 
 ## Contents
 
-4 interfaces - that's it. Keep this repo **small and stable**.
+Keep this repo **small and stable**.
 
 | Interface | Purpose |
 |---|---|
@@ -41,8 +41,14 @@ Task<PluginLoginResult> ConnectAsync(
 | `IPluginBackgroundTask` | Recurring background work (`Name`, `Schedule`, `ExecuteAsync`) |
 | `IPluginEventHandler<TCommand>` | React to backend commands |
 | `IPluginUserContext` | Read current user / school-user from inside a plugin |
+| `IPluginLogin` | Account connect + the plugin's `SchoolSystemDescriptor` catalog entry |
+| `ISchoolData` | Provision school/student, sync agenda, grades, absences, documents (records in `SchoolRecords.cs`) |
+| `IPluginVault` | Per-plugin encrypted secret store |
+| `IPluginFileStore` | Store a downloaded file, get its key |
 
 Plus the `PluginServiceContext` record (`ConnectionString`, `IConfiguration`) passed to `ConfigureServices`.
+
+The package ships **no backend assemblies** (it used to bundle `Schuly.Domain.dll` / `Schuly.Infrastructure.dll`; removed in 0.4). Plugins write school data only through `ISchoolData`.
 
 ## What this repo **must not** depend on
 

@@ -21,21 +21,20 @@ src/
 │   ├── IPluginEventHandler.cs
 │   ├── IPluginUserContext.cs
 │   ├── IPluginLogin.cs                         # + PluginLoginResult record
+│   ├── SchoolSystemDescriptor.cs
+│   ├── ISchoolData.cs                          # + SyncResult record
+│   ├── SchoolRecords.cs                        # records ISchoolData accepts
+│   ├── IPluginVault.cs
+│   ├── IPluginFileStore.cs                     # + StoredFile record
 │   ├── NUGET_README.md                         # packed as the NuGet README
-│   ├── Schuly.Plugin.Abstractions.csproj
-│   └── libs/                                    # shipped backend DLLs
-│       ├── Schuly.Domain.dll
-│       └── Schuly.Infrastructure.dll
+│   └── Schuly.Plugin.Abstractions.csproj
 └── Schuly.Plugin.Abstractions.Tests/
     ├── PluginScheduleTests.cs
     └── Schuly.Plugin.Abstractions.Tests.csproj
 ```
 
-The csproj references `libs/Schuly.Domain.dll` and `libs/Schuly.Infrastructure.dll`
-(synced from SchulyBackend) so the project compiles against them, and packs them under
-`lib/net10.0/` so plugins get typed DB access. The transitive deps those DLLs need
-(`Microsoft.EntityFrameworkCore`, `Npgsql.EntityFrameworkCore.PostgreSQL`) are declared as
-`PackageReference`s in the csproj.
+The package has no dependencies beyond the `Microsoft.AspNetCore.App` framework reference.
+It ships no backend assemblies: plugins reach school data only through `ISchoolData`.
 
 ## Build
 

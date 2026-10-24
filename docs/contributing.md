@@ -13,10 +13,9 @@ The abstractions assembly must reference **only**:
 Do **not** add references to `Schuly.Application` (those types live in
 [SchulyBackend](https://github.com/schulydev/SchulyBackend) and are not published).
 
-> The repo ships the backend's `Schuly.Domain.dll` and `Schuly.Infrastructure.dll` as
-> prebuilt binaries under `src/Schuly.Plugin.Abstractions/libs/` (synced from the backend) so
-> plugins get typed DB access; the EF Core packages those DLLs need are declared in the csproj.
-> Don't turn these into project references or pull additional backend source into this repo.
+> Plugins never see the backend's entities or DbContext. They write school data through
+> `ISchoolData` with the plain records in `SchoolRecords.cs`, so keep those records free of
+> backend types and add fields only in a backward-compatible way.
 
 ## Workflow (enforced)
 

@@ -30,3 +30,16 @@ runtime, so a careless change breaks every plugin in the field.
 rebuild of every plugin and don't cause type-load failures across patch versions. Only a
 **MINOR or MAJOR** bump changes the binding assembly version - another reason to follow the
 table above exactly.
+
+## Before 1.0
+
+While the version is `0.x`, a breaking change bumps **MINOR** (`0.3` → `0.4`) instead of
+MAJOR, so cut the release with an explicit `gh release create v0.<next>.0` rather than the
+version release-drafter suggests for a `breaking-change` label.
+
+## Compatibility at load time
+
+The backend compares the `Schuly.Plugin.Abstractions` assembly version a plugin was built
+against with its own and refuses an incompatible plugin with a clear log message instead of
+failing later with a type-load error. Compatible means the same MAJOR for `1.x` and later, and
+the same MAJOR.MINOR for `0.x`.

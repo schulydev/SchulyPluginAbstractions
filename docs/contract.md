@@ -1,13 +1,21 @@
 # Contract reference
 
 Everything in the package lives in the `Schuly.Plugin.Abstractions` namespace and targets
-`net10.0`. The contract is **5 interfaces** plus three small records. All signatures below are
-copied verbatim from source under `src/Schuly.Plugin.Abstractions/`.
+`net10.0`. All signatures below are copied verbatim from source under
+`src/Schuly.Plugin.Abstractions/`.
 
-> The package also ships the backend's `Schuly.Domain.dll` and `Schuly.Infrastructure.dll`
-> alongside the abstractions assembly (see the csproj), so plugins can use the backend's
-> typed entities and DbContext for direct DB access. See
-> [development](setup/development.md) for how those are referenced.
+Plugins never touch the backend's entities or database. The host registers these services in
+every plugin's container:
+
+| Service | Purpose |
+|---|---|
+| `IPluginUserContext` | The current user / school-user |
+| `ISchoolData` | Write school data (see below) |
+| `IPluginVault` | The plugin's own encrypted secret store |
+| `IPluginFileStore` | Store downloaded files in Schuly's document storage |
+
+A plugin keeps its own state (accounts, sync cursors) in its own database via
+`PluginServiceContext.ConnectionString`.
 
 ## `ISchulyPlugin`
 
@@ -203,6 +211,88 @@ public record PluginLoginResult(bool Success, Guid? AccountId = null, string? Me
 | `Success` | Whether the connect succeeded. |
 | `AccountId` | The persisted account id when successful. |
 | `Message` | Optional human-readable detail (e.g. an error reason). |
+
+## `ISchoolData`
+
+The plugin's write access to Schuly's school data. The host stamps every row with the calling
+plugin as its source and only lets a plugin write to students it provisioned itself.
+
+```csharp
+public interface ISchoolData
+{
+    Task<Guid> EnsureSchoolAsync(SchoolRecord school, CancellationToken cancellationToken = default);
+    Task<Guid> EnsureStudentAsync(Guid schoolId, Guid applicationUserId, StudentRecord student, CancellationToken cancellationToken = default);
+    Task<SyncResult> SyncAgendaAsync(Guid schoolUserId, IReadOnlyCollection<AgendaRecord> entries, CancellationToken cancellationToken = default);
+    Task<SyncResult> SyncGradesAsync(Guid schoolUserId, IReadOnlyCollection<GradeRecord> grades, CancellationToken cancellationToken = default);
+    Task<SyncResult> SyncAbsencesAsync(Guid schoolUserId, IReadOnlyCollection<AbsenceRecord> absences, CancellationToken cancellationToken = default);
+    Task<SyncResult> SyncDocumentsAsync(Guid schoolUserId, IReadOnlyCollection<DocumentRecord> documents, CancellationToken cancellationToken = default);
+    Task<IReadOnlySet<string>> GetDocumentIdsAsync(Guid schoolUserId, CancellationToken cancellationToken = default);
+}
+```
+
+| Member | Purpose |
+|---|---|
+| `EnsureSchoolAsync` | Find a school by website (or name), creating it if missing. Returns its id. |
+| `EnsureStudentAsync` | Find the user's student profile at the school, creating it if missing, and fill blank fields. Returns the school-user id. |
+| `Sync*Async` | Upsert records by `ExternalId`: unknown ids are added, known ones updated. Returns `SyncResult(Added, Updated)`. |
+| `GetDocumentIdsAsync` | External ids of documents already synced, so a plugin can skip re-downloading them. |
+
+`SyncGradesAsync` creates the subject (class) and exam for each grade as needed and enrols the
+student in it.
+
+### Records
+
+```csharp
+public sealed record SchoolRecord(string Name, string? Website = null, string? LogoUrl = null);
+public sealed record AgendaRecord(string ExternalId, AgendaKind Kind, string Title, DateTimeOffset Start, DateTimeOffset? End = null, string? Place = null, string? Description = null);
+public sealed record GradeRecord(string ExternalId, string Subject, string ExamName, decimal Score, decimal Weight = 1, DateOnly? ExamDate = null);
+public sealed record AbsenceRecord(string ExternalId, DateTimeOffset From, DateTimeOffset Until, string? Reason = null, bool IsLate = false);
+public sealed record DocumentRecord(string ExternalId, string Title, string? FileName = null, string? Category = null, string? Comment = null, string? EnteredBy = null, StoredFile? File = null);
+public enum AgendaKind { Event = 0, Lesson = 1, Test = 2, Holiday = 3 }
+```
+
+`StudentRecord` has optional init-only profile fields (`FirstName`, `LastName`, `Email`,
+`PrivateEmail`, `PhoneNumber`, `Street`, `City`, `Zip`, `Birthday`, `EntryDate`, `LeaveDate`,
+`ProfilePictureUrl`).
+
+**Times are `DateTimeOffset`.** Convert provider wall-clock times with the provider's time
+zone before building a record; Schuly stores UTC only. A date-only entry (a holiday, a full-day
+absence) starts at UTC midnight of its day.
+
+**`ExternalId` must be stable** across syncs for the same item - the provider's own id where
+there is one, otherwise a key built from fields that don't change.
+
+## `IPluginVault`
+
+```csharp
+public interface IPluginVault
+{
+    void Set(string key, string value);
+    string? Get(string key);
+    bool TryGet(string key, [NotNullWhen(true)] out string? value);
+    bool Contains(string key);
+    bool Remove(string key);
+    void Clear();
+    int Count { get; }
+}
+```
+
+Each plugin gets its own namespace; values are encrypted at rest (AES-256-GCM) and readable
+only through this vault.
+
+## `IPluginFileStore`
+
+```csharp
+public interface IPluginFileStore
+{
+    Task<StoredFile> SaveAsync(Stream content, string fileName, string? contentType, CancellationToken cancellationToken = default);
+}
+
+public sealed record StoredFile(string Key, long SizeBytes);
+```
+
+Stores a downloaded file in Schuly's encrypted document storage. Pass the returned
+`StoredFile` in a `DocumentRecord` so the app can download it.
 
 ---
 
