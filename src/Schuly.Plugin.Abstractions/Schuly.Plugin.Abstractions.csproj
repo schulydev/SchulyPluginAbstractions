@@ -10,7 +10,7 @@
     <PackageProjectUrl>https://github.com/schulydev/SchulyPluginAbstractions</PackageProjectUrl>
     <RepositoryUrl>https://github.com/schulydev/SchulyPluginAbstractions</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>PolyForm-Noncommercial-1.0.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>schuly;plugin;abstractions</PackageTags>

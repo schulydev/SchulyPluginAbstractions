@@ -63,4 +63,4 @@ Semver. Any interface change is tagged `breaking-change` and bumps the major ver
 
 ## License
 
-MIT
+PolyForm Noncommercial License 1.0.0

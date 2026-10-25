@@ -32,7 +32,7 @@ resolves from the merged PR labels - see [versioning](../versioning.md).
 
 Edit metadata in the csproj `PropertyGroup`
 (`src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj`): `PackageId`,
-`Description`, `Authors`, `PackageProjectUrl`, `PackageLicenseExpression` (`MIT`),
+`Description`, `Authors`, `PackageProjectUrl`, `PackageLicenseExpression` (`PolyForm-Noncommercial-1.0.0`),
 `PackageTags`, etc.
 
 ### Two READMEs
