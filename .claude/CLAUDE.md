@@ -45,6 +45,7 @@ Keep this repo **small and stable**.
 | `ISchoolData` | Provision school/student, sync agenda, grades, absences, documents (records in `SchoolRecords.cs`) |
 | `IPluginVault` | Per-plugin encrypted secret store |
 | `IPluginFileStore` | Store a downloaded file, get its key |
+| `ILinkedAccounts` | User-scoped accounts linked with an outside provider (Microsoft), shared across plugins, with encrypted secrets |
 
 Plus the `PluginServiceContext` record (`ConnectionString`, `IConfiguration`) passed to `ConfigureServices`.
 

@@ -28,6 +28,17 @@ namespace Schuly.Plugin.Abstractions
         /// <summary>Account-mode endpoints, e.g. "/api/plugins/schulware".</summary>
         public string? PluginBasePath { get; init; }
 
+        /// <summary>
+        /// Anonymous endpoint the app calls (GET, <c>?baseUrl=</c>) once the school's URL is entered.
+        /// It answers <see cref="LoginMethodResult"/>: a linked provider means the app shows that
+        /// provider's linked accounts and submits <see cref="LinkedAccountFieldKey"/> instead of the
+        /// fields marked <see cref="SchoolSystemLoginFieldDescriptor.ReplacedByLinkedAccount"/>.
+        /// </summary>
+        public string? LoginMethodPath { get; init; }
+
+        /// <summary>The login field carrying the chosen linked account's id.</summary>
+        public const string LinkedAccountFieldKey = "linkedAccountId";
+
         public bool Enabled { get; init; } = true;
 
         public int SortOrder { get; init; }
@@ -51,5 +62,11 @@ namespace Schuly.Plugin.Abstractions
         public string? DefaultValue { get; init; }
 
         public bool Required { get; init; } = true;
+
+        /// <summary>Hidden when the school signs in with a linked account (e.g. email, password, 2FA).</summary>
+        public bool ReplacedByLinkedAccount { get; init; }
     }
+
+    /// <summary>What <see cref="SchoolSystemDescriptor.LoginMethodPath"/> answers; a null provider means plain credentials.</summary>
+    public sealed record LoginMethodResult(string? LinkedProvider);
 }
