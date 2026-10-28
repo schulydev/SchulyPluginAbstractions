@@ -77,7 +77,7 @@ public interface IPluginBackgroundTask
 ### `PluginSchedule`
 
 The plugin's default schedule for a background task, as a scheduler-agnostic value - it
-depends on nothing beyond the BCL. The host maps it onto its own scheduler (TickerQ); the
+depends on nothing beyond the BCL. The host maps it onto its own scheduler; the
 host operator can override the cadence per deployment.
 
 ```csharp

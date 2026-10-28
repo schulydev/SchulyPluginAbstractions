@@ -6,7 +6,7 @@ namespace Schuly.Plugin.Abstractions
     /// <summary>
     /// A plugin's declared <em>default</em> schedule for an <see cref="IPluginBackgroundTask"/>.
     /// This type is scheduler-agnostic and has no dependency beyond the BCL - it only describes
-    /// intent; the host maps it onto its own scheduler (TickerQ). The host operator can override
+    /// intent; the host maps it onto its own scheduler. The host operator can override
     /// the cadence per deployment, so treat these values as a sensible default, not a guarantee.
     /// </summary>
     public sealed record PluginSchedule(string Cron, int Retries = 0, IReadOnlyList<TimeSpan>? RetryIntervals = null, bool RunOnStartup = false)
