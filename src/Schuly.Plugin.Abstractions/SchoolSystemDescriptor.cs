@@ -74,5 +74,26 @@ namespace Schuly.Plugin.Abstractions
     public sealed record LoginFieldSuggestion(string Label, string Value);
 
     /// <summary>What <see cref="SchoolSystemDescriptor.LoginMethodPath"/> answers; a null provider means plain credentials.</summary>
-    public sealed record LoginMethodResult(string? LinkedProvider);
+    public sealed record LoginMethodResult(string? LinkedProvider)
+    {
+        /// <summary>
+        /// Set when the school signs in through a browser instead: the app POSTs <c>{ "baseUrl": ... }</c> here and
+        /// gets a <see cref="BrowserLoginStart"/>. It hides the fields marked
+        /// <see cref="SchoolSystemLoginFieldDescriptor.ReplacedByLinkedAccount"/>.
+        /// </summary>
+        public string? BrowserLoginPath { get; init; }
+    }
+
+    /// <summary>
+    /// A browser sign-in: open <see cref="AuthUrl"/>, wait for a navigation to a URL starting with
+    /// <see cref="CallbackUrl"/> whose <c>state</c> is <see cref="State"/>, then submit that URL as
+    /// <see cref="CallbackFieldKey"/> and <see cref="Context"/> as <see cref="ContextFieldKey"/>: to
+    /// <see cref="IPluginLogin.ConnectAsync"/> in account mode, or to <see cref="CompletePath"/> in private mode.
+    /// </summary>
+    public sealed record BrowserLoginStart(string AuthUrl, string CallbackUrl, string State, string Context, string? CompletePath)
+    {
+        public const string CallbackFieldKey = "browserCallbackUrl";
+
+        public const string ContextFieldKey = "browserContext";
+    }
 }
