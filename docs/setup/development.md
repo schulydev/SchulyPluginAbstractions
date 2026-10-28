@@ -59,7 +59,7 @@ dotnet test
 ```
 
 The interfaces themselves have no runtime behavior of their own and are still verified by
-downstream consumers (SchulyBackend and the plugins).
+downstream consumers (SchulyServer and the plugins).
 
 ## Pack dry-run (local)
 

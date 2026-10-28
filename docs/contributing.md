@@ -11,7 +11,7 @@ The abstractions assembly must reference **only**:
 - the `Microsoft.AspNetCore.App` framework reference.
 
 Do **not** add references to `Schuly.Application` (those types live in
-[SchulyBackend](https://github.com/schulydev/SchulyBackend) and are not published).
+[SchulyServer](https://github.com/schulydev/SchulyServer) and are not published).
 
 > Plugins never see the backend's entities or DbContext. They write school data through
 > `ISchoolData` with the plain records in `SchoolRecords.cs`, so keep those records free of

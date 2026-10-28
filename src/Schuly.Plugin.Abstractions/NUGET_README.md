@@ -2,7 +2,7 @@
 
 ![Schuly](https://raw.githubusercontent.com/schulydev/Schuly/main/assets/app_icon.png)
 
-The stable plugin contract for the [Schuly backend](https://github.com/schulydev/SchulyBackend). Implement these interfaces to extend the backend with background tasks, event handlers, and integrations - without vendoring backend source.
+The stable plugin contract for the [Schuly backend](https://github.com/schulydev/SchulyServer). Implement these interfaces to extend the backend with background tasks, event handlers, and integrations - without vendoring backend source.
 
 ## What's in the package
 
@@ -52,7 +52,7 @@ scheduler-agnostic and only describes intent.
 
 ## Links
 
-- [SchulyBackend](https://github.com/schulydev/SchulyBackend) - consumes this package
+- [SchulyServer](https://github.com/schulydev/SchulyServer) - consumes this package
 - [SchulyPlugins](https://github.com/schulydev/SchulyPlugins) - official plugins
 - [Source](https://github.com/schulydev/SchulyPluginAbstractions)
 - [schuly.dev](https://schuly.dev)
