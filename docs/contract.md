@@ -202,6 +202,8 @@ public SchoolSystemDescriptor SchoolSystem => new()
 };
 ```
 
+`LoginMethodPath` answers a `LoginMethodResult`. Set `LinkedProvider` when the school signs in with a linked account, or `BrowserLoginPath` when it signs in through a browser (for example a cantonal login no server can fill in). The app POSTs `{ "baseUrl": ... }` to `BrowserLoginPath` and gets a `BrowserLoginStart(AuthUrl, CallbackUrl, State, Context, CompletePath)`. It opens `AuthUrl`, waits for a URL starting with `CallbackUrl` whose `state` matches, and submits that URL and `Context` as the `browserCallbackUrl` and `browserContext` fields: to `ConnectAsync` in account mode, or to `CompletePath` in private mode.
+
 `Suggestions` lists known values the app offers to pick from, as `LoginFieldSuggestion(Label, Value)`.
 The user can still type any other value.
 
