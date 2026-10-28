@@ -1,7 +1,7 @@
 # Schuly.Plugin.Abstractions - Documentation
 
 `Schuly.Plugin.Abstractions` is the **stable plugin contract** for the
-[Schuly backend](https://github.com/schulydev/SchulyBackend), published to NuGet.org
+[Schuly backend](https://github.com/schulydev/SchulyServer), published to NuGet.org
 as [`Schuly.Plugin.Abstractions`](https://www.nuget.org/packages/Schuly.Plugin.Abstractions).
 Plugin authors reference the package and implement its interfaces; the backend's plugin
 host discovers and runs the implementation. This repo is intentionally **small and

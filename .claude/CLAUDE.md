@@ -54,7 +54,7 @@ The package ships **no backend assemblies** (it used to bundle `Schuly.Domain.dl
 
 ## What this repo **must not** depend on
 
-- `Schuly.Application` / `Schuly.Domain` / `Schuly.Infrastructure` - those are in [SchulyBackend](https://github.com/schulydev/SchulyBackend) and not published. Only BCL + `Microsoft.AspNetCore.App` framework references are allowed.
+- `Schuly.Application` / `Schuly.Domain` / `Schuly.Infrastructure` - those are in [SchulyServer](https://github.com/schulydev/SchulyServer) and not published. Only BCL + `Microsoft.AspNetCore.App` framework references are allowed.
 
 ## Versioning rules
 

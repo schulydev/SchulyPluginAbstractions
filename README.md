@@ -12,7 +12,7 @@
   <a href="https://docs.schuly.dev/SchulyPluginAbstractions/"><img src="https://img.shields.io/badge/docs-docs.schuly.dev-3da8ff" alt="Documentation"/></a>
 </p>
 
-The stable contract that plugins implement and that [SchulyBackend](https://github.com/schulydev/SchulyBackend) consumes. Versioned and published as a NuGet package so plugin authors don't need to vendor backend source.
+The stable contract that plugins implement and that [SchulyServer](https://github.com/schulydev/SchulyServer) consumes. Versioned and published as a NuGet package so plugin authors don't need to vendor backend source.
 
 ## What's in this repo
 
@@ -49,7 +49,7 @@ Writing a plugin against this contract? See [Adding a plugin](https://docs.schul
 | Repo | Purpose |
 |---|---|
 | [**Schuly**](https://github.com/schulydev/Schuly) | Flutter mobile app |
-| [**SchulyBackend**](https://github.com/schulydev/SchulyBackend) | ASP.NET Core API backend |
+| [**SchulyServer**](https://github.com/schulydev/SchulyServer) | ASP.NET Core API and web app |
 | [**SchulyKeycloak**](https://github.com/schulydev/SchulyKeycloak) | Keycloak image + the `schuly` realm |
 | [**SchulyPluginAbstractions**](https://github.com/schulydev/SchulyPluginAbstractions) | Plugin contract (NuGet) *(this repo)* |
 | [**SchulyPlugins**](https://github.com/schulydev/SchulyPlugins) | Official plugins monorepo |
