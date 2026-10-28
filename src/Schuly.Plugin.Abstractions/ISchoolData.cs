@@ -18,6 +18,9 @@ namespace Schuly.Plugin.Abstractions
         /// <summary>Creates the subject (class) and exam for each grade as needed and enrols the student.</summary>
         Task<SyncResult> SyncGradesAsync(Guid schoolUserId, IReadOnlyCollection<GradeRecord> grades, CancellationToken cancellationToken = default);
 
+        /// <summary>Creates or updates exams (e.g. upcoming ones without a grade) in the student's subjects and enrols the student.</summary>
+        Task<SyncResult> SyncExamsAsync(Guid schoolUserId, IReadOnlyCollection<ExamRecord> exams, CancellationToken cancellationToken = default) => Task.FromResult(new SyncResult(0, 0));
+
         Task<SyncResult> SyncAbsencesAsync(Guid schoolUserId, IReadOnlyCollection<AbsenceRecord> absences, CancellationToken cancellationToken = default);
 
         Task<SyncResult> SyncDocumentsAsync(Guid schoolUserId, IReadOnlyCollection<DocumentRecord> documents, CancellationToken cancellationToken = default);
