@@ -191,12 +191,19 @@ public SchoolSystemDescriptor SchoolSystem => new()
     PluginBasePath = "/api/plugins/schulware",
     LoginFields =
     [
-        new() { Key = "baseUrl",  Label = "Schulnetz URL", Type = "url",      Required = true },
+        new()
+        {
+            Key = "baseUrl", Label = "Schulnetz URL", Type = "url", Required = true,
+            Suggestions = [new("BBB Berufsfachschule Baden", "https://schulnetz.bbbaden.ch")],
+        },
         new() { Key = "email",    Label = "Email",         Type = "text",     Required = true },
         new() { Key = "password", Label = "Password",      Type = "password", Required = true },
     ],
 };
 ```
+
+`Suggestions` lists known values the app offers to pick from, as `LoginFieldSuggestion(Label, Value)`.
+The user can still type any other value.
 
 ### `PluginLoginResult`
 
