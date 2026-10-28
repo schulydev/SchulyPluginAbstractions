@@ -65,7 +65,13 @@ namespace Schuly.Plugin.Abstractions
 
         /// <summary>Hidden when the school signs in with a linked account (e.g. email, password, 2FA).</summary>
         public bool ReplacedByLinkedAccount { get; init; }
+
+        /// <summary>Known values the app offers to pick from, e.g. schools and their URLs. Any other value can still be entered.</summary>
+        public IReadOnlyList<LoginFieldSuggestion> Suggestions { get; init; } = [];
     }
+
+    /// <summary>One pickable value of a login field.</summary>
+    public sealed record LoginFieldSuggestion(string Label, string Value);
 
     /// <summary>What <see cref="SchoolSystemDescriptor.LoginMethodPath"/> answers; a null provider means plain credentials.</summary>
     public sealed record LoginMethodResult(string? LinkedProvider);
