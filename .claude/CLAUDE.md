@@ -47,6 +47,7 @@ Keep this repo **small and stable**.
 | `IPluginFileStore` | Store a downloaded file, get its key |
 | `PluginUserPurgeEvent` | Dispatched on account deletion so a plugin can wipe its own user data (handle via `IPluginEventHandler`) |
 | `ILinkedAccounts` | User-scoped accounts linked with an outside provider (Microsoft), shared across plugins, with encrypted secrets |
+| `ILinkProvider` | Host-rendered account linking: descriptor, multi-step flows (`LinkStep`), `LinkStepValidator` / `LinkDescriptorValidator` (in `Linking/`) |
 
 Plus the `PluginServiceContext` record (`ConnectionString`, `IConfiguration`) passed to `ConfigureServices`.
 

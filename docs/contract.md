@@ -311,6 +311,48 @@ public sealed record StoredFile(string Key, long SizeBytes);
 Stores a downloaded file in Schuly's encrypted document storage. Pass the returned
 `StoredFile` in a `DocumentRecord` so the app can download it.
 
+## `ILinkProvider`
+
+Host-rendered account linking (namespace `Schuly.Plugin.Abstractions.Linking`, since 0.11). A plugin
+declares a descriptor and drives a multi-step flow; the host and the clients render whatever steps it
+returns, so no client hardcodes plugin-specific screens. Register with
+`services.AddScoped<ILinkProvider, XLinkProvider>()`.
+
+```csharp
+public interface ILinkProvider
+{
+    LinkProviderDescriptor Descriptor { get; }
+    Task<LinkStepResult> StartAsync(LinkStartContext context, CancellationToken cancellationToken = default);
+    Task<LinkStepResult> SubmitAsync(LinkSubmitContext context, CancellationToken cancellationToken = default);
+    Task<LinkStepResult> PollAsync(LinkPollContext context, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<LinkedAccountSummary>> ListAccountsAsync(Guid applicationUserId, CancellationToken cancellationToken = default);
+    Task<bool> UnlinkAsync(Guid applicationUserId, string accountId, CancellationToken cancellationToken = default);
+}
+```
+
+| Type | Purpose |
+|---|---|
+| `LinkProviderDescriptor` | `Id` (`^[a-z0-9][a-z0-9-]{1,40}$`), `DisplayName`, `Icon` (`LinkIcon`: Lucide name or SVG), `Capabilities` (`ProviderCapability(Kind, Label, Icon, BasePath)`), `Flows` (`LinkFlowDescriptor`, with `LinkPlatforms`) |
+| `LinkStepResult(Step, State)` | Next step plus opaque plugin state. `Done(accountId, title, state)` and `Fail(message)` build the terminal steps |
+| `LinkStep` | `Id`, `Kind` (`Form`, `Otp`, `PushCode`, `DeviceCode`, `Redirect`, `Select`, `Done`, `Error`), inline `Error`, and the payload for the kind (`Fields`, `Otp`, `PushCode`, `DeviceCode`, `Redirect`, `Options`, `Actions`) |
+| `LinkField` | Form field: `Key` (`^[A-Za-z][A-Za-z0-9_]{0,40}$`), `Type`, `Required`, `Secret`, `MaxLength`, `Pattern`, `Options`, `AllowCustom` |
+| `LinkRedirect` | `HostCallback` (browser returns to `LinkStartContext.HostCallbackUrl`) or `Capture` (mobile WebView intercepts `CallbackPrefix`) |
+| `LinkedAccountSummary` | Row returned by `ListAccountsAsync`: `Status` (`Ok`, `Syncing`, `Expired`, `Error`; clients poll while `Syncing`) and optional `LastSyncedAt` |
+
+Security rules:
+
+- `State` is carried by the host (encrypted, in memory, at most 10 minutes) and never sent to clients. It must never hold passwords or other user-entered secrets.
+- Fields with `Secret = true` (and every submitted value) are never logged or stored by the host or the plugin. Do not put submitted values in error messages.
+- `Capture` redirects are mobile-only; the host rejects them for the web platform. Use `HostCallback` only when the provider really sends the browser back to the host.
+- Verification and redirect URLs must be https.
+
+Pure helpers the host uses (no dependencies):
+
+- `LinkStepValidator.Validate(LinkStep step, IReadOnlyDictionary<string, string> values, string? action)` checks a submit against the current step. Unknown keys are rejected; required, `MaxLength` (default 2048), `Pattern` (100 ms timeout), email shape, https URL (http only for localhost), select options (unless `AllowCustom`) are enforced. An Otp step takes key `code` (exactly `Length` chars, digits if `NumericOnly`); a Select step takes key `value`; a Capture redirect takes `callbackUrl` and optional `cookies`. `action` must be one of the step's actions or the reserved `refresh` / `cancel`. Messages name field keys, never values.
+- `LinkDescriptorValidator.ValidateDescriptor(LinkProviderDescriptor)` and `ValidateStep(LinkStep, LinkPlatform)` check ids, keys, https-only URLs and Capture-on-web.
+
+Both return `LinkValidationResult(bool IsValid, IReadOnlyList<string> Errors)`.
+
 ---
 
 See [versioning](versioning.md) for the rules that govern changes to any of these members.
