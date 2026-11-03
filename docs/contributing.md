@@ -1,41 +1,26 @@
 # Contributing
 
-This repo is the **stable published contract**. Keep it small, keep it stable. Almost every
-change is governed by [versioning](versioning.md) - read that first.
+These rules apply to this repo. For branches, commits, pull requests, and labels, follow the
+[shared workflow](/contribute/).
+
+This repo is the published contract, so keep it small and stable. [Versioning](versioning.md) governs
+almost every change. Read it first.
 
 ## Dependency rules
 
-The abstractions assembly must reference **only**:
+The abstractions assembly may reference only:
 
-- the BCL, and
-- the `Microsoft.AspNetCore.App` framework reference.
+- the BCL
+- the `Microsoft.AspNetCore.App` framework reference
 
-Do **not** add references to `Schuly.Application` (those types live in
-[SchulyServer](https://github.com/schulydev/SchulyServer) and are not published).
+Don't add references to `Schuly.Application`, `Schuly.Domain`, or `Schuly.Infrastructure`. Those types
+live in [SchulyServer](https://github.com/schulydev/SchulyServer) and aren't published.
 
-> Plugins never see the backend's entities or DbContext. They write school data through
-> `ISchoolData` with the plain records in `SchoolRecords.cs`, so keep those records free of
-> backend types and add fields only in a backward-compatible way.
+Plugins never see the backend's entities or `DbContext`. They write school data through `ISchoolData`
+with the plain records in `SchoolRecords.cs`. Keep those records free of backend types, and add fields
+only in a backward-compatible way.
 
-## Workflow (enforced)
+## Pick a version bump
 
-1. **Open a labeled issue** describing the change. Use the right label so release-drafter
-   resolves the next version correctly (`breaking-change`, `feature`, `documentation`,
-   `CI/CD`, `dependencies`, `bug`, `refactor`).
-2. **Branch** from `main`: `feature/<issue#>_PascalCase` or `fix/<issue#>_PascalCase`.
-   Never commit to `main`.
-3. **Open a PR** with `Closes #<issue>`. The PR body is **Summary + `Closes #<issue>` only** -
-   no test plans.
-4. **Squash-merge** and delete the branch.
-
-Commit subjects are short and imperative.
-
-## No AI attribution
-
-Never add AI / assistant attribution anywhere - not in commit messages, PR descriptions, or
-issue bodies. No `Co-Authored-By` trailers, no "generated with" lines. Ever.
-
-## Picking a version bump
-
-See the table in [versioning](versioning.md). The PR label you choose is what drives the
-release version, so label deliberately.
+The PR label you choose drives the release version, so label deliberately. In addition to the shared
+labels, this repo uses `breaking-change`. See the table in [versioning](versioning.md).
