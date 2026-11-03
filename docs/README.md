@@ -12,7 +12,7 @@ built against one host don't break on another.
 
 - [Contract reference](contract.md) - every interface and record, with real signatures
   and where each member fits in the plugin lifecycle.
-- [Setup](setup/) - local development and publishing:
+- Setup - local development and publishing:
   - [Development](setup/development.md) - prerequisites, build, local pack dry-run.
   - [Publishing](setup/publishing.md) - the NuGet release flow and package metadata.
 - [Versioning](versioning.md) - strict semver rules and the labels that drive releases.
