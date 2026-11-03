@@ -1,82 +1,98 @@
 # Development
 
-Local environment for building and packing the abstractions package.
+Use this page to build, test, and pack the abstractions package locally.
 
 ## Prerequisites
 
-- **.NET SDK 10.0.x** - the project targets `net10.0`
-  (`<TargetFramework>net10.0</TargetFramework>` in the csproj).
-- The project uses a `Microsoft.AspNetCore.App` framework reference, so the ASP.NET Core
-  shared framework must be available (it ships with the .NET SDK).
+- **.NET SDK 10.0.x.** The project targets `net10.0`.
+- **The ASP.NET Core shared framework.** The project has a `Microsoft.AspNetCore.App` framework reference.
+  The .NET SDK includes this framework.
 
 ## Project layout
 
 ```
+application.properties                          # holds <version>
+global.json                                     # test runner: Microsoft.Testing.Platform
+Schuly.Plugin.Abstractions.slnx
 src/
-├── Directory.Build.props                      # reads <version> from application.properties
+├── Directory.Build.props                       # reads <version> from application.properties
 ├── Schuly.Plugin.Abstractions/
-│   ├── ISchulyPlugin.cs                        # + PluginServiceContext record
+│   ├── ILinkedAccounts.cs                      # + LinkedAccountRecord, LinkedAccount, LinkedProviders, LinkedSecrets
 │   ├── IPluginBackgroundTask.cs
-│   ├── PluginSchedule.cs                       # PluginSchedule record
 │   ├── IPluginEventHandler.cs
-│   ├── IPluginUserContext.cs
-│   ├── IPluginLogin.cs                         # + PluginLoginResult record
-│   ├── SchoolSystemDescriptor.cs
-│   ├── ISchoolData.cs                          # + SyncResult record
-│   ├── SchoolRecords.cs                        # records ISchoolData accepts
-│   ├── IPluginVault.cs
 │   ├── IPluginFileStore.cs                     # + StoredFile record
+│   ├── IPluginLogin.cs                         # + PluginLoginResult record
+│   ├── IPluginUserContext.cs
+│   ├── IPluginVault.cs
+│   ├── ISchoolData.cs                          # + SyncResult record
+│   ├── ISchulyPlugin.cs                        # + PluginServiceContext record
+│   ├── Linking/
+│   │   ├── ILinkProvider.cs                    # + descriptor, step, field, and context records
+│   │   ├── LinkDescriptorValidator.cs
+│   │   ├── LinkStepValidator.cs
+│   │   └── LinkValidationResult.cs
 │   ├── NUGET_README.md                         # packed as the NuGet README
+│   ├── PluginSchedule.cs                       # PluginSchedule record
+│   ├── PluginUserPurgeEvent.cs
+│   ├── SchoolRecords.cs                        # records ISchoolData accepts
+│   ├── SchoolSystemDescriptor.cs               # + login field, login method, and browser login records
 │   └── Schuly.Plugin.Abstractions.csproj
 └── Schuly.Plugin.Abstractions.Tests/
+    ├── LinkingTests.cs
     ├── PluginScheduleTests.cs
     └── Schuly.Plugin.Abstractions.Tests.csproj
 ```
 
-The package has no dependencies beyond the `Microsoft.AspNetCore.App` framework reference.
-It ships no backend assemblies: plugins reach school data only through `ISchoolData`.
+The package has no dependencies beyond the `Microsoft.AspNetCore.App` framework reference. It ships no
+backend assemblies, so plugins reach school data only through `ISchoolData`.
 
 ## Build
 
-The repo root has a solution file (`Schuly.Plugin.Abstractions.slnx`) that builds both the
-abstractions project and its test project together:
+The solution file in the repo root (`Schuly.Plugin.Abstractions.slnx`) builds the abstractions project and
+its test project together:
 
 ```sh
 dotnet build
 ```
 
-Or point at the abstractions project directly, as the publish workflow does:
+To build only the abstractions project, as the publish workflow's pack step does:
 
 ```sh
 dotnet build src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj
 ```
 
-There is now a TUnit test project (`Schuly.Plugin.Abstractions.Tests`) covering
-`PluginSchedule`:
+## Test
+
+The TUnit test project `Schuly.Plugin.Abstractions.Tests` covers `PluginSchedule`
+(`PluginScheduleTests.cs`) and linking validation, `LinkStepValidator` and `LinkDescriptorValidator`
+(`LinkingTests.cs`):
 
 ```sh
 dotnet test
 ```
 
-The interfaces themselves have no runtime behavior of their own and are still verified by
-downstream consumers (SchulyServer and the plugins).
+The interfaces have no runtime behavior of their own. Downstream consumers (SchulyServer and the plugins)
+verify them.
 
-## Pack dry-run (local)
+## Pack dry-run
 
-To produce the `.nupkg` locally without publishing:
+To produce the `.nupkg` locally without publishing, run this from `src/Schuly.Plugin.Abstractions/`:
 
 ```sh
 dotnet pack Schuly.Plugin.Abstractions.csproj --configuration Release -o ./out
 ```
 
-(From the repo root, point at the full path
-`src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj` - that's exactly what the
-publish workflow runs.)
+From the repo root, use the full path, as the publish workflow does:
 
-You do **not** pass `-p:Version=`. The version comes from `application.properties`
-(`<version>…</version>`), which `src/Directory.Build.props` reads at project-load time via a
-regex and assigns to `$(Version)`. `Directory.Build.props` also pins the **assembly** version
-to `MAJOR.MINOR.0.0` so any `MAJOR.MINOR.x` plugin binds to a single stable assembly version,
-while `FileVersion` / `InformationalVersion` keep the full version for diagnostics.
+```sh
+dotnet pack src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj --configuration Release -o ./out
+```
+
+Don't pass `-p:Version=`. The version comes from `<version>` in `application.properties`.
+`src/Directory.Build.props` reads it at project-load time with a regex and assigns it to `$(Version)`.
+
+`Directory.Build.props` also pins the assembly version to `MAJOR.MINOR.0.0`, so any `MAJOR.MINOR.x` plugin
+binds to one stable assembly version. `FileVersion` and `InformationalVersion` keep the full version for
+diagnostics.
 
 See [publishing](publishing.md) for how packing fits into the release flow.

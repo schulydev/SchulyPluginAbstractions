@@ -1,20 +1,19 @@
-# Schuly.Plugin.Abstractions - Documentation
+# Schuly.Plugin.Abstractions
 
-`Schuly.Plugin.Abstractions` is the **stable plugin contract** for the
-[Schuly backend](https://github.com/schulydev/SchulyServer), published to NuGet.org
-as [`Schuly.Plugin.Abstractions`](https://www.nuget.org/packages/Schuly.Plugin.Abstractions).
-Plugin authors reference the package and implement its interfaces; the backend's plugin
-host discovers and runs the implementation. This repo is intentionally **small and
-stable** - the contract changes rarely and is governed by strict semver, so plugins
-built against one host don't break on another.
+Use these pages to look up the plugin contract or to change it.
 
-## Index
+`Schuly.Plugin.Abstractions` is the plugin contract for the
+[Schuly server](https://github.com/schulydev/SchulyServer), published to NuGet.org as
+[`Schuly.Plugin.Abstractions`](https://www.nuget.org/packages/Schuly.Plugin.Abstractions). You reference
+the package and implement its interfaces. The server's plugin host finds and runs your implementation.
 
-- [Contract reference](contract.md) - every interface and record, with real signatures
-  and where each member fits in the plugin lifecycle.
-- Setup - local development and publishing:
-  - [Development](setup/development.md) - prerequisites, build, local pack dry-run.
-  - [Publishing](setup/publishing.md) - the NuGet release flow and package metadata.
-- [Versioning](versioning.md) - strict semver rules and the labels that drive releases.
-- [Contributing](contributing.md) - the enforced issue → branch → PR workflow and the
-  dependency rules this repo lives by.
+This repo stays small and stable. The contract changes rarely and follows strict semver, so plugins built
+against one host don't break on another.
+
+| Page | Use it to |
+|---|---|
+| [Contract reference](contract.md) | Look up each interface and record, with real signatures and where each member fits in the plugin lifecycle |
+| [Development](setup/development.md) | Set up, build, test, and dry-run a pack |
+| [Publishing](setup/publishing.md) | See the NuGet release flow and package metadata |
+| [Versioning](versioning.md) | Pick a version bump, and see the labels that drive releases |
+| [Contributing](contributing.md) | Follow this repo's dependency rules |
