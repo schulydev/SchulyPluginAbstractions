@@ -1,56 +1,58 @@
 # <p align="center">SchulyPluginAbstractions</p>
 <p align="center">
-  <img src="./assets/app_icon.png" width="160" alt="Schuly Logo">
+  <img src="./assets/app_icon.png" width="96" alt="Schuly Logo">
 </p>
 <p align="center">
-  <strong>Plugin contract for the Schuly backend - distributed as a NuGet package</strong>
+  <strong>The contract every Schuly plugin implements.</strong>
 </p>
 <p align="center">
-  <a href="https://github.com/schulydev/SchulyPluginAbstractions/stargazers"><img src="https://img.shields.io/github/stars/schulydev/SchulyPluginAbstractions?style=flat&color=3da8ff" alt="GitHub stars"/></a>
   <a href="https://www.nuget.org/packages/Schuly.Plugin.Abstractions"><img src="https://img.shields.io/nuget/v/Schuly.Plugin.Abstractions?color=3da8ff&label=NuGet" alt="NuGet"/></a>
-  <a href="https://dotnet.microsoft.com/"><img src="https://img.shields.io/badge/.NET-10.0-3da8ff" alt=".NET"/></a>
-  <a href="https://docs.schuly.dev/SchulyPluginAbstractions/"><img src="https://img.shields.io/badge/docs-docs.schuly.dev-3da8ff" alt="Documentation"/></a>
+  <img src="https://img.shields.io/badge/.NET-10-3da8ff" alt=".NET 10"/>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3da8ff" alt="MIT license"/></a>
 </p>
 
-The stable contract that plugins implement and that [SchulyServer](https://github.com/schulydev/SchulyServer) consumes. Versioned and published as a NuGet package so plugin authors don't need to vendor backend source.
+## Install
 
-## What's in this repo
-
-- `ISchulyPlugin` - entry point: register services, endpoints, migrations
-- `IPluginLogin` - account-connect contract, and the source of a plugin's school-system catalog entry
-- `IPluginBackgroundTask` - recurring background work on a declared `PluginSchedule` (cron + retries)
-- `IPluginEventHandler<TCommand>` - react to application commands
-- `IPluginUserContext` - read user claims / roles from inside a plugin
-
-## Consume in a plugin
-
-```xml
-<PackageReference Include="Schuly.Plugin.Abstractions" Version="*" />
+```sh
+dotnet add package Schuly.Plugin.Abstractions
 ```
 
-Implement `ISchulyPlugin` and the backend's plugin host discovers it automatically.
+```csharp
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
+using Schuly.Plugin.Abstractions;
 
-## Documentation
+public sealed class MyPlugin : ISchulyPlugin
+{
+    public string Name => "My School";
+    public string Version => "1.0.0";
 
-Full documentation lives at **[docs.schuly.dev/SchulyPluginAbstractions](https://docs.schuly.dev/SchulyPluginAbstractions/)**.
+    public void ConfigureServices(IServiceCollection services, PluginServiceContext context) { }
 
-| Guide | What it covers |
-|---|---|
-| [The contract](https://docs.schuly.dev/SchulyPluginAbstractions/contract) | Every interface, member by member, with worked examples. |
-| [Development setup](https://docs.schuly.dev/SchulyPluginAbstractions/setup/development) | Build and test the package locally. |
-| [Publishing](https://docs.schuly.dev/SchulyPluginAbstractions/setup/publishing) | How a release reaches NuGet.org. |
-| [Versioning](https://docs.schuly.dev/SchulyPluginAbstractions/versioning) | Semver policy and what counts as breaking. |
-| [Contributing](https://docs.schuly.dev/SchulyPluginAbstractions/contributing) | Workflow, branch and PR conventions. |
+    public void ConfigureEndpoints(IEndpointRouteBuilder endpoints) =>
+        endpoints.MapGet("/api/plugins/myschool/hello", () => "Hello from my plugin");
 
-Writing a plugin against this contract? See [Adding a plugin](https://docs.schuly.dev/SchulyPlugins/adding-a-plugin).
+    public Task MigrateAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+}
+```
 
-## The Schuly ecosystem
+That's a whole plugin. [SchulyServer](https://github.com/schulydev/SchulyServer) finds the class, and the plugin never touches the server's source or database.
 
-| Repo | Purpose |
-|---|---|
-| [**Schuly**](https://github.com/schulydev/Schuly) | Flutter mobile app |
-| [**SchulyServer**](https://github.com/schulydev/SchulyServer) | ASP.NET Core API and web app |
-| [**SchulyPluginAbstractions**](https://github.com/schulydev/SchulyPluginAbstractions) | Plugin contract (NuGet) *(this repo)* |
-| [**SchulyPlugins**](https://github.com/schulydev/SchulyPlugins) | Official plugins monorepo |
-| [**SchulyWebsite**](https://github.com/schulydev/SchulyWebsite) | Landing site ([schuly.dev](https://schuly.dev)) |
-| [**SchulyDocs**](https://github.com/schulydev/SchulyDocs) | Documentation site ([docs.schuly.dev](https://docs.schuly.dev)) |
+## Beyond that
+
+Implement these when your plugin needs them:
+
+- `IPluginLogin`: connect a school account, and put your school system in the app's picker
+- `IPluginBackgroundTask`: recurring work on a `PluginSchedule`
+- `IPluginEventHandler<TCommand>`: react to application commands
+- `ILinkProvider`: link an outside account
+
+The server hands you `ISchoolData`, `IPluginVault`, `IPluginFileStore`, `IPluginUserContext` and `ILinkedAccounts`.
+
+[The contract](https://docs.schuly.dev/SchulyPluginAbstractions/contract) has every member, [versioning](https://docs.schuly.dev/SchulyPluginAbstractions/versioning) says what counts as breaking, and [Add a plugin](https://docs.schuly.dev/SchulyPlugins/adding-a-plugin) goes from here to a loaded plugin.
+
+## License
+
+[MIT](LICENSE)
