@@ -49,6 +49,31 @@ namespace Schuly.Plugin.Abstractions
     {
         /// <summary>Whether the school has accepted an excuse; null when it doesn't say.</summary>
         public bool? IsExcused { get; init; }
+
+        /// <summary>Time of day as the school sent it (HH:mm); null when it only gives dates.</summary>
+        public string? StartTime { get; init; }
+
+        public string? EndTime { get; init; }
+
+        /// <summary>The parents' confirmation step, as the school words it.</summary>
+        public string? ParentStatus { get; init; }
+
+        public DateOnly? ParentStatusDate { get; init; }
+
+        /// <summary>The training company's confirmation step, as the school words it.</summary>
+        public string? TrainerStatus { get; init; }
+
+        public DateOnly? TrainerStatusDate { get; init; }
+
+        public string? TrainerComment { get; init; }
+
+        /// <summary>The student's own comment on the absence.</summary>
+        public string? Comment { get; init; }
+
+        /// <summary>The last day to excuse it, when the school sets one.</summary>
+        public DateOnly? ExcuseDeadline { get; init; }
+
+        public int? Lessons { get; init; }
     }
 
     /// <summary>A semester report (Zeugnis). <see cref="SchoolYearStart"/> is the year the school year begins (2025 for 25/26); <see cref="SemesterHalf"/> is 1 or 2.</summary>
