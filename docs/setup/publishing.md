@@ -20,18 +20,35 @@ runs on `release: published`. It has two jobs:
 
    This keeps `application.properties`, the single source of truth for the package version, in step with
    the tag.
-2. **`publish`** (`needs: sync-version`) checks out `main`, sets up .NET `10.0.x`, then runs:
+2. **`publish`** (`needs: sync-version`) checks out `main`, sets up .NET `10.0.x`, packs, signs in to
+   NuGet.org with `NuGet/login@v1` and pushes:
 
    ```sh
    dotnet pack src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj \
      --configuration Release -o ./out
    dotnet nuget push ./out/*.nupkg \
-     --api-key ${{ secrets.NUGET_API_KEY }} \
+     --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} \
      --source https://api.nuget.org/v3/index.json \
      --skip-duplicate
    ```
 
    `--skip-duplicate` makes a re-run safe if the version already exists on NuGet.org.
+
+## Trusted Publishing
+
+There is no stored API key. The job has `permissions: id-token: write`, and `NuGet/login` trades GitHub's
+OIDC token for a key that lives about an hour. That only works while the nuget.org policy matches exactly:
+
+| Policy field | Value |
+|---|---|
+| Package owner | `PianoNic` |
+| Repository owner and repository | `schulydev` / `SchulyPluginAbstractions` |
+| Workflow file | `nuget-publish.yml` |
+| Environment | none, so the job must not declare `environment:` |
+| Scope | push new versions of `Schuly.Plugin.Abstractions` |
+
+Renaming the workflow file or the repository breaks publishing until the policy is updated. A re-run of an
+old release uses the workflow saved at that tag, so cut a new release after changing this file.
 
 ## Package metadata
 
