@@ -65,6 +65,10 @@ jobs:
     name: Pack and push to NuGet.org
     needs: sync-version
     runs-on: ubuntu-latest
+    # Trusted Publishing: nuget.org trades GitHub's OIDC token for a key that lives about an hour. The policy has no environment, so this job declares none.
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v5
         with:
@@ -77,9 +81,15 @@ jobs:
       - name: Pack
         run: dotnet pack src/Schuly.Plugin.Abstractions/Schuly.Plugin.Abstractions.csproj --configuration Release -o ./out
 
+      - name: Sign in to NuGet.org
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: PianoNic
+
       - name: Push to NuGet.org
         run: |
           dotnet nuget push ./out/*.nupkg \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }} \
             --source https://api.nuget.org/v3/index.json \
             --skip-duplicate
