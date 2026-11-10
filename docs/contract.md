@@ -400,6 +400,7 @@ public interface ILinkedAccounts
     Task<string?> GetSecretAsync(Guid applicationUserId, Guid linkedAccountId, string name, CancellationToken cancellationToken = default);
     Task SetSecretAsync(Guid applicationUserId, Guid linkedAccountId, string name, string value, CancellationToken cancellationToken = default);
     Task<bool> SetPictureAsync(Guid applicationUserId, Guid linkedAccountId, Stream? content, string? contentType, CancellationToken cancellationToken = default) => Task.FromResult(false);
+    Task<bool> SetSchoolUserPictureAsync(Guid applicationUserId, Guid schoolUserId, Stream? content, string? contentType, CancellationToken cancellationToken = default) => Task.FromResult(false);
 }
 
 public sealed record LinkedAccountRecord(string Provider, string ExternalId, string Email, string? DisplayName);
@@ -411,6 +412,7 @@ public sealed record LinkedAccount(Guid Id, string Provider, string ExternalId, 
 | `SaveAsync` | Adds the account, or updates it when the user already linked this `ExternalId` at the provider. |
 | `RemoveAsync` | Removes the account, its secrets and its picture. |
 | `SetPictureAsync` | Since 0.11.3. Stores the account's profile picture (PNG, JPEG or WebP, at most 2 MB) in the host's encrypted storage; `null` content removes it. Only the account owner sees it, and it is deleted with the account. Returns `false` when the host rejects the picture or is older and runs the default. |
+| `SetSchoolUserPictureAsync` | Since 0.11.4. Stores the picture of a school account (student profile) the user owns, such as the photo on a student ID card, under the same rules as `SetPictureAsync`. Account rows whose `SchoolUserId` points at it show it ahead of a linked account's picture. Returns `false` when the school user is not the user's, the host rejects the picture or is older and runs the default. |
 | `LinkedProviders.Microsoft` | The provider key `"microsoft"`. |
 | `LinkedSecrets.RefreshToken` | The secret name `"refresh_token"`: the provider's OAuth refresh token. |
 | `LinkedSecrets.SessionCookies` | The secret name `"session_cookies"`: the provider's sign-in session as a JSON array of `{domain, name, path, value}` cookies. |

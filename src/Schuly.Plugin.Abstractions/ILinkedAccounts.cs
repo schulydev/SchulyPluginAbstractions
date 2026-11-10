@@ -23,6 +23,15 @@ namespace Schuly.Plugin.Abstractions
         /// support pictures (hosts before 0.11.3 run this default).
         /// </summary>
         Task<bool> SetPictureAsync(Guid applicationUserId, Guid linkedAccountId, Stream? content, string? contentType, CancellationToken cancellationToken = default) => Task.FromResult(false);
+
+        /// <summary>
+        /// Stores the picture of a school account the user owns, the student profile a plugin syncs into (for example the
+        /// photo on a student ID card), under the same rules as <see cref="SetPictureAsync"/>. The host shows it on account rows
+        /// that point at <paramref name="schoolUserId"/> (<c>LinkedAccountSummary.SchoolUserId</c>), ahead of any linked account's
+        /// picture. Returns false when the school user is not the user's, the host rejects the picture or does not support
+        /// school account pictures (hosts before 0.11.4 run this default).
+        /// </summary>
+        Task<bool> SetSchoolUserPictureAsync(Guid applicationUserId, Guid schoolUserId, Stream? content, string? contentType, CancellationToken cancellationToken = default) => Task.FromResult(false);
     }
 
     public sealed record LinkedAccountRecord(string Provider, string ExternalId, string Email, string? DisplayName);
