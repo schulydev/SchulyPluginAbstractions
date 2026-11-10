@@ -411,5 +411,35 @@ namespace Schuly.Plugin.Abstractions.Tests
             await Assert.That(Enum.GetValues<LinkedAccountStatus>().ToList().IndexOf(LinkedAccountStatus.Error)).IsEqualTo(3);
             await Assert.That(summary.LastSyncedAt).IsNull();
         }
+
+        [Test]
+        public async Task Picture_references_default_to_none()
+        {
+            var summary = new LinkedAccountSummary("1", "T", null, LinkedAccountStatus.Ok, null, null);
+            var schoolUserId = Guid.NewGuid();
+            var linked = summary with { SchoolUserId = schoolUserId };
+
+            await Assert.That(summary.SchoolUserId).IsNull();
+            await Assert.That(summary.LinkedAccountId).IsNull();
+            await Assert.That(linked.SchoolUserId).IsEqualTo(schoolUserId);
+        }
+
+        [Test]
+        public async Task SetPictureAsync_defaults_to_unsupported()
+        {
+            ILinkedAccounts accounts = new NoPictureAccounts();
+
+            await Assert.That(await accounts.SetPictureAsync(Guid.NewGuid(), Guid.NewGuid(), new MemoryStream([1]), "image/png")).IsFalse();
+        }
+
+        private sealed class NoPictureAccounts : ILinkedAccounts
+        {
+            public Task<IReadOnlyList<LinkedAccount>> ListAsync(Guid applicationUserId, string provider, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<LinkedAccount>>([]);
+            public Task<LinkedAccount?> GetAsync(Guid applicationUserId, Guid linkedAccountId, CancellationToken cancellationToken = default) => Task.FromResult<LinkedAccount?>(null);
+            public Task<LinkedAccount> SaveAsync(Guid applicationUserId, LinkedAccountRecord account, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+            public Task<bool> RemoveAsync(Guid applicationUserId, Guid linkedAccountId, CancellationToken cancellationToken = default) => Task.FromResult(false);
+            public Task<string?> GetSecretAsync(Guid applicationUserId, Guid linkedAccountId, string name, CancellationToken cancellationToken = default) => Task.FromResult<string?>(null);
+            public Task SetSecretAsync(Guid applicationUserId, Guid linkedAccountId, string name, string value, CancellationToken cancellationToken = default) => Task.CompletedTask;
+        }
     }
 }

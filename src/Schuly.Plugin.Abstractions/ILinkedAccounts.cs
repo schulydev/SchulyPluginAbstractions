@@ -15,6 +15,14 @@ namespace Schuly.Plugin.Abstractions
         Task<bool> RemoveAsync(Guid applicationUserId, Guid linkedAccountId, CancellationToken cancellationToken = default);
         Task<string?> GetSecretAsync(Guid applicationUserId, Guid linkedAccountId, string name, CancellationToken cancellationToken = default);
         Task SetSecretAsync(Guid applicationUserId, Guid linkedAccountId, string name, string value, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Stores the account's profile picture (PNG, JPEG or WebP, at most 2 MB) so the user can tell their accounts apart.
+        /// Null <paramref name="content"/> removes it. The host keeps it in its own encrypted storage, shows it only to the
+        /// account owner and deletes it with the account. Returns false when the host rejects the picture or does not
+        /// support pictures (hosts before 0.11.3 run this default).
+        /// </summary>
+        Task<bool> SetPictureAsync(Guid applicationUserId, Guid linkedAccountId, Stream? content, string? contentType, CancellationToken cancellationToken = default) => Task.FromResult(false);
     }
 
     public sealed record LinkedAccountRecord(string Provider, string ExternalId, string Email, string? DisplayName);
