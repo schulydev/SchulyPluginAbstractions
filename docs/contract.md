@@ -399,6 +399,7 @@ public interface ILinkedAccounts
     Task<bool> RemoveAsync(Guid applicationUserId, Guid linkedAccountId, CancellationToken cancellationToken = default);
     Task<string?> GetSecretAsync(Guid applicationUserId, Guid linkedAccountId, string name, CancellationToken cancellationToken = default);
     Task SetSecretAsync(Guid applicationUserId, Guid linkedAccountId, string name, string value, CancellationToken cancellationToken = default);
+    Task<bool> SetPictureAsync(Guid applicationUserId, Guid linkedAccountId, Stream? content, string? contentType, CancellationToken cancellationToken = default) => Task.FromResult(false);
 }
 
 public sealed record LinkedAccountRecord(string Provider, string ExternalId, string Email, string? DisplayName);
@@ -408,7 +409,8 @@ public sealed record LinkedAccount(Guid Id, string Provider, string ExternalId, 
 | Member | Purpose |
 |---|---|
 | `SaveAsync` | Adds the account, or updates it when the user already linked this `ExternalId` at the provider. |
-| `RemoveAsync` | Removes the account and its secrets. |
+| `RemoveAsync` | Removes the account, its secrets and its picture. |
+| `SetPictureAsync` | Since 0.11.3. Stores the account's profile picture (PNG, JPEG or WebP, at most 2 MB) in the host's encrypted storage; `null` content removes it. Only the account owner sees it, and it is deleted with the account. Returns `false` when the host rejects the picture or is older and runs the default. |
 | `LinkedProviders.Microsoft` | The provider key `"microsoft"`. |
 | `LinkedSecrets.RefreshToken` | The secret name `"refresh_token"`: the provider's OAuth refresh token. |
 | `LinkedSecrets.SessionCookies` | The secret name `"session_cookies"`: the provider's sign-in session as a JSON array of `{domain, name, path, value}` cookies. |
@@ -445,7 +447,7 @@ public interface ILinkProvider
 | `LinkField` | Form field: `Key` (`^[A-Za-z][A-Za-z0-9_]{0,40}$`), `Label`, `Type`, `Placeholder`, `Help`, `DefaultValue`, `Required`, `Secret`, `MaxLength`, `Pattern` (.NET regex), `Options`, `AllowCustom`. |
 | `LinkOption` | `LinkProviderId`, when set, means "link an account at that provider first". The client runs that provider's link flow, then resubmits this step with action `refresh`. |
 | `LinkRedirect` | `HostCallback`: the browser returns to `LinkStartContext.HostCallbackUrl`. `Capture`: a mobile WebView intercepts the first URL starting with `CallbackPrefix`, then submits `callbackUrl` and `cookies` for `CaptureCookieDomains`. |
-| `LinkedAccountSummary` | Row returned by `ListAccountsAsync`: `Status` (`Ok`, `Syncing`, `Expired`, `Error`; clients poll while `Syncing`) and optional `LastSyncedAt`. |
+| `LinkedAccountSummary` | Row returned by `ListAccountsAsync`: `Status` (`Ok`, `Syncing`, `Expired`, `Error`; clients poll while `Syncing`) and optional `LastSyncedAt`. Since 0.11.3 the optional `SchoolUserId` (the student profile the account syncs into) or `LinkedAccountId` (its `ILinkedAccounts` row) let the host show that profile's or account's picture on the row. |
 
 The positional records and enums:
 
@@ -469,7 +471,7 @@ public sealed record LinkPushCode(string? Number, DateTimeOffset ExpiresAt, int 
 public sealed record LinkDeviceCode(string UserCode, string VerificationUri, DateTimeOffset ExpiresAt, int PollIntervalSeconds);
 public sealed record LinkRedirect(string Url, LinkRedirectMode Mode, string? CallbackPrefix, IReadOnlyList<string> CaptureCookieDomains);
 public sealed record LinkDone(string AccountId, string? Title);
-public sealed record LinkedAccountSummary(string Id, string Title, string? Detail, LinkedAccountStatus Status, DateTimeOffset? LinkedAt, string? Message, DateTimeOffset? LastSyncedAt = null);
+public sealed record LinkedAccountSummary(string Id, string Title, string? Detail, LinkedAccountStatus Status, DateTimeOffset? LinkedAt, string? Message, DateTimeOffset? LastSyncedAt = null) { public Guid? SchoolUserId { get; init; } public Guid? LinkedAccountId { get; init; } }
 ```
 
 ### Security rules

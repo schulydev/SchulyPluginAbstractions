@@ -168,5 +168,12 @@ namespace Schuly.Plugin.Abstractions.Linking
     /// <summary>Syncing: initial or ongoing sync in progress; clients show a syncing state and poll /api/linking/accounts until it leaves Syncing, then reload dependent data.</summary>
     public enum LinkedAccountStatus { Ok, Syncing, Expired, Error }
 
-    public sealed record LinkedAccountSummary(string Id, string Title, string? Detail, LinkedAccountStatus Status, DateTimeOffset? LinkedAt, string? Message, DateTimeOffset? LastSyncedAt = null);
+    public sealed record LinkedAccountSummary(string Id, string Title, string? Detail, LinkedAccountStatus Status, DateTimeOffset? LinkedAt, string? Message, DateTimeOffset? LastSyncedAt = null)
+    {
+        /// <summary>The student profile this account syncs into (from <see cref="ISchoolData.EnsureStudentAsync"/>); the host shows its picture on the account.</summary>
+        public Guid? SchoolUserId { get; init; }
+
+        /// <summary>The <see cref="ILinkedAccounts"/> account this row stands for; the host shows its picture (see <see cref="ILinkedAccounts.SetPictureAsync"/>).</summary>
+        public Guid? LinkedAccountId { get; init; }
+    }
 }
