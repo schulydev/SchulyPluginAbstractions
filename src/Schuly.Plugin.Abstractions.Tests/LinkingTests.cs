@@ -432,6 +432,15 @@ namespace Schuly.Plugin.Abstractions.Tests
             await Assert.That(await accounts.SetPictureAsync(Guid.NewGuid(), Guid.NewGuid(), new MemoryStream([1]), "image/png")).IsFalse();
         }
 
+        [Test]
+        public async Task SetSchoolUserPictureAsync_defaults_to_unsupported()
+        {
+            ILinkedAccounts accounts = new NoPictureAccounts();
+
+            await Assert.That(await accounts.SetSchoolUserPictureAsync(Guid.NewGuid(), Guid.NewGuid(), new MemoryStream([1]), "image/png")).IsFalse();
+            await Assert.That(await accounts.SetSchoolUserPictureAsync(Guid.NewGuid(), Guid.NewGuid(), null, null)).IsFalse();
+        }
+
         private sealed class NoPictureAccounts : ILinkedAccounts
         {
             public Task<IReadOnlyList<LinkedAccount>> ListAsync(Guid applicationUserId, string provider, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<LinkedAccount>>([]);
