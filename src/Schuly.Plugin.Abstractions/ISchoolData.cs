@@ -18,6 +18,14 @@ namespace Schuly.Plugin.Abstractions
         /// <summary>Creates the subject (class) and exam for each grade as needed and enrols the student.</summary>
         Task<SyncResult> SyncGradesAsync(Guid schoolUserId, IReadOnlyCollection<GradeRecord> grades, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Like <see cref="SyncGradesAsync"/>, and also removes this plugin's grades of the student whose exam is dated
+        /// on or after <paramref name="since"/> and that are not in <paramref name="grades"/>: pass the start of the period
+        /// the plugin read completely, e.g. the current semester. Undated grades are kept, and an empty list removes nothing,
+        /// so a failed read never wipes grades. Hosts older than 0.12 only upsert.
+        /// </summary>
+        Task<SyncResult> ReplaceGradesAsync(Guid schoolUserId, IReadOnlyCollection<GradeRecord> grades, DateOnly since, CancellationToken cancellationToken = default) => SyncGradesAsync(schoolUserId, grades, cancellationToken);
+
         /// <summary>Creates or updates exams (e.g. upcoming ones without a grade) in the student's subjects and enrols the student.</summary>
         Task<SyncResult> SyncExamsAsync(Guid schoolUserId, IReadOnlyCollection<ExamRecord> exams, CancellationToken cancellationToken = default) => Task.FromResult(new SyncResult(0, 0));
 
