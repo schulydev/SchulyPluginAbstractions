@@ -297,6 +297,7 @@ public interface ISchoolData
     Task<Guid> EnsureStudentAsync(Guid schoolId, Guid applicationUserId, StudentRecord student, CancellationToken cancellationToken = default);
     Task<SyncResult> SyncAgendaAsync(Guid schoolUserId, IReadOnlyCollection<AgendaRecord> entries, CancellationToken cancellationToken = default);
     Task<SyncResult> SyncGradesAsync(Guid schoolUserId, IReadOnlyCollection<GradeRecord> grades, CancellationToken cancellationToken = default);
+    Task<SyncResult> ReplaceGradesAsync(Guid schoolUserId, IReadOnlyCollection<GradeRecord> grades, DateOnly since, CancellationToken cancellationToken = default) => SyncGradesAsync(schoolUserId, grades, cancellationToken);
     Task<SyncResult> SyncExamsAsync(Guid schoolUserId, IReadOnlyCollection<ExamRecord> exams, CancellationToken cancellationToken = default) => Task.FromResult(new SyncResult(0, 0));
     Task<SyncResult> SyncAbsencesAsync(Guid schoolUserId, IReadOnlyCollection<AbsenceRecord> absences, CancellationToken cancellationToken = default);
     Task<SyncResult> SyncDocumentsAsync(Guid schoolUserId, IReadOnlyCollection<DocumentRecord> documents, CancellationToken cancellationToken = default);
@@ -312,6 +313,7 @@ public sealed record SyncResult(int Added, int Updated);
 | `EnsureSchoolAsync` | Find a school by website (or by name when it has none), creating it if missing. Returns its id. |
 | `EnsureStudentAsync` | Find the user's student profile at the school, creating it if missing, and fill blank fields. Returns the school-user id. |
 | `SyncAgendaAsync`, `SyncGradesAsync`, `SyncAbsencesAsync`, `SyncDocumentsAsync` | Upsert records by `ExternalId`: unknown ids are added, known ones updated. Returns `SyncResult(Added, Updated)`. |
+| `ReplaceGradesAsync` | `SyncGradesAsync`, then removes the plugin's grades with an exam dated on or after `since` that are not in the list. Pass the start of the period the plugin read completely. Undated grades are kept; an empty list removes nothing. Hosts older than 0.12 only upsert. |
 | `SyncExamsAsync` | Upsert exams by subject and name. `ExamRecord` has no `ExternalId`. Returns `SyncResult(Added, Updated)`. |
 | `SyncSemesterReportsAsync` | Upsert semester reports by program code, school year, and half-year. Each report's subjects are replaced as a whole. Returns `SyncResult(Added, Updated)`. |
 | `GetDocumentIdsAsync` | External ids of documents this plugin already synced for the student, so it can skip re-downloading them. |
